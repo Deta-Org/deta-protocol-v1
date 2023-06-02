@@ -1,26 +1,3 @@
-<p align="center"><img src="https://s3.amazonaws.com/deta-assets/logo_large_white.png" width="256" /></p>
-
-<p align="center">
-  <a href="https://circleci.com/gh/detaprotocol/workflows/protocol_v1/tree/master">
-    <img src="https://img.shields.io/circleci/project/github/detaprotocol/protocol_v1.svg" alt='CI' />
-  </a>
-  <a href='https://coveralls.io/github/detaprotocol/protocol'>
-    <img src='https://coveralls.io/repos/github/detaprotocol/protocol/badge.svg?branch=master' alt='Coverage Status' />
-  </a>
-  <a href='https://github.com/detaprotocol/protocol/blob/master/LICENSE'>
-    <img src='https://img.shields.io/github/license/detaprotocol/protocol.svg?longCache=true' alt='License' />
-  </a>
-  <a href='https://www.npmjs.com/package/@detaprotocol/protocol'>
-    <img src='https://img.shields.io/npm/v/@detaprotocol/protocol.svg' alt='NPM' />
-  </a>
-  <a href='https://store.docker.com/community/images/detaprotocol/protocol/tags'>
-    <img src='https://img.shields.io/badge/docker-container-blue.svg?logo=docker&longCache=true' alt='Docker' />
-  </a>
-  <a href='https://slack.deta.exchange/'>
-    <img src='https://img.shields.io/badge/chat-on%20slack-brightgreen.svg?longCache=true' alt='Slack' />
-  </a>
-</p>
-
 **DEPRECATED see our new protocol [here](https://github.com/detaprotocol/solo)**
 
 Source code for Ethereum Smart Contracts used by the deta Margin Trading Protocol
