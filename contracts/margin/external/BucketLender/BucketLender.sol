@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import { MarginHelper } from "../lib/MarginHelper.sol";
 
 /**
  * @title BucketLender
- * @author dYdX
+ * @author deta
  *
  * On-chain shared lender that allows anyone to deposit tokens into this contract to be used to
  * lend tokens for a particular margin position.
@@ -198,7 +198,7 @@ contract BucketLender is
 
     /**
      * Latest cached value for totalOwedTokenRepaidToLender.
-     * This number updates on the dYdX Margin base protocol whenever the position is
+     * This number updates on the deta Margin base protocol whenever the position is
      * partially-closed, but this contract is not notified at that time. Therefore, it is updated
      * upon increasing the position or when depositing/withdrawing
      */
@@ -327,7 +327,7 @@ contract BucketLender is
         returns (address)
     {
         require(
-            Margin(DYDX_MARGIN).containsPosition(POSITION_ID),
+            Margin(deta_MARGIN).containsPosition(POSITION_ID),
             "BucketLender#verifyLoanOffering: This contract should not open a new position"
         );
 
@@ -430,7 +430,7 @@ contract BucketLender is
         onlyPosition(positionId)
         returns (address)
     {
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, POSITION_ID);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, POSITION_ID);
         uint256 initialPrincipal = position.principal;
         uint256 minHeldToken = MathHelpers.getPartialAmount(
             uint256(MIN_HELD_TOKEN_NUMERATOR),
@@ -467,7 +467,7 @@ contract BucketLender is
             "BucketLender#receiveLoanOwnership: Position interestPeriod mismatch"
         );
         require(
-            Margin(DYDX_MARGIN).getPositionBalance(POSITION_ID) >= minHeldToken,
+            Margin(deta_MARGIN).getPositionBalance(POSITION_ID) >= minHeldToken,
             "BucketLender#receiveLoanOwnership: Not enough heldToken as collateral"
         );
 
@@ -503,7 +503,7 @@ contract BucketLender is
         onlyPosition(positionId)
         returns (address)
     {
-        Margin margin = Margin(DYDX_MARGIN);
+        Margin margin = Margin(deta_MARGIN);
 
         require(
             payer == address(this),
@@ -637,7 +637,7 @@ contract BucketLender is
         nonReentrant
         returns (uint256)
     {
-        Margin margin = Margin(DYDX_MARGIN);
+        Margin margin = Margin(deta_MARGIN);
         bytes32 positionId = POSITION_ID;
 
         require(
@@ -749,7 +749,7 @@ contract BucketLender is
         // the zero value represents no-lock
         uint256 lockedBucket = 0;
         if (
-            Margin(DYDX_MARGIN).containsPosition(POSITION_ID) &&
+            Margin(deta_MARGIN).containsPosition(POSITION_ID) &&
             criticalBucket == getCurrentBucket()
         ) {
             lockedBucket = criticalBucket;
@@ -836,7 +836,7 @@ contract BucketLender is
         returns (uint256)
     {
         // load variables from storage;
-        Margin margin = Margin(DYDX_MARGIN);
+        Margin margin = Margin(deta_MARGIN);
         bytes32 positionId = POSITION_ID;
         uint32 bucketTime = BUCKET_TIME;
 
@@ -868,7 +868,7 @@ contract BucketLender is
         returns (uint256)
     {
         // if the position is completely closed, then the outstanding principal will never be repaid
-        if (Margin(DYDX_MARGIN).isPositionClosed(POSITION_ID)) {
+        if (Margin(deta_MARGIN).isPositionClosed(POSITION_ID)) {
             return 0;
         }
 
@@ -880,7 +880,7 @@ contract BucketLender is
         }
 
         // get the total amount of owedToken that would be paid back at this time
-        uint256 owedAmount = Margin(DYDX_MARGIN).getPositionOwedAmountAtTime(
+        uint256 owedAmount = Margin(deta_MARGIN).getPositionOwedAmountAtTime(
             POSITION_ID,
             principalTotal,
             uint32(block.timestamp)
@@ -929,7 +929,7 @@ contract BucketLender is
             return;
         }
 
-        uint256 marginPrincipal = Margin(DYDX_MARGIN).getPositionPrincipal(POSITION_ID);
+        uint256 marginPrincipal = Margin(deta_MARGIN).getPositionPrincipal(POSITION_ID);
 
         accountForClose(principalTotal.sub(marginPrincipal));
 
@@ -954,7 +954,7 @@ contract BucketLender is
             return;
         }
 
-        uint256 newRepaidAmount = Margin(DYDX_MARGIN).getTotalOwedTokenRepaidToLender(POSITION_ID);
+        uint256 newRepaidAmount = Margin(deta_MARGIN).getTotalOwedTokenRepaidToLender(POSITION_ID);
         assert(newRepaidAmount.sub(cachedRepaidAmount) >= principalRemoved);
 
         uint256 principalToSub = principalRemoved;

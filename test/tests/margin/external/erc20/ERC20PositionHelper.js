@@ -8,14 +8,14 @@ const TOKENIZED_POSITION_STATE = {
 
 async function getERC20PositionConstants(erc20Contract) {
   const [
-    DYDX_MARGIN,
+    deta_MARGIN,
     POSITION_ID,
     state,
     INITIAL_TOKEN_HOLDER,
     heldToken,
     totalSupply
   ] = await Promise.all([
-    erc20Contract.DYDX_MARGIN.call(),
+    erc20Contract.deta_MARGIN.call(),
     erc20Contract.POSITION_ID.call(),
     erc20Contract.state.call(),
     erc20Contract.INITIAL_TOKEN_HOLDER.call(),
@@ -24,7 +24,7 @@ async function getERC20PositionConstants(erc20Contract) {
   ]);
 
   return {
-    DYDX_MARGIN,
+    deta_MARGIN,
     POSITION_ID,
     state,
     INITIAL_TOKEN_HOLDER,

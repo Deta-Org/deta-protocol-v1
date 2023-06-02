@@ -25,7 +25,7 @@ describe('#openWithoutCounterparty', () => {
     it('succeeds on valid inputs', async () => {
       const [
         openTx,
-        dydxMargin
+        detaMargin
       ] = await Promise.all([
         setup(accounts),
         Margin.deployed()
@@ -33,14 +33,14 @@ describe('#openWithoutCounterparty', () => {
 
       const startingBalances = await getBalances(openTx);
 
-      const tx = await callOpenWithoutCounterparty(dydxMargin, openTx);
+      const tx = await callOpenWithoutCounterparty(detaMargin, openTx);
 
       console.log(
         '\tMargin.openWithoutCounterparty gas used: '
         + tx.receipt.gasUsed
       );
 
-      await validate(dydxMargin, openTx, tx, startingBalances);
+      await validate(detaMargin, openTx, tx, startingBalances);
     });
   });
 
@@ -48,20 +48,20 @@ describe('#openWithoutCounterparty', () => {
     it('succeeds if different nonces are used', async () => {
       const [
         openTx,
-        dydxMargin
+        detaMargin
       ] = await Promise.all([
         setup(accounts),
         Margin.deployed()
       ]);
 
-      await callOpenWithoutCounterparty(dydxMargin, openTx);
+      await callOpenWithoutCounterparty(detaMargin, openTx);
 
       const openTx2 = await setup(accounts);
       openTx2.nonce = openTx2.nonce.plus(1);
       const startingBalances = await getBalances(openTx);
-      const tx = await callOpenWithoutCounterparty(dydxMargin, openTx2);
+      const tx = await callOpenWithoutCounterparty(detaMargin, openTx2);
 
-      await validate(dydxMargin, openTx, tx, startingBalances);
+      await validate(detaMargin, openTx, tx, startingBalances);
     });
   });
 
@@ -70,19 +70,19 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if positionId already exists', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
         ]);
 
-        await callOpenWithoutCounterparty(dydxMargin, openTx);
+        await callOpenWithoutCounterparty(detaMargin, openTx);
 
         // doesn't work for same nonce
         const openTx2 = await setup(accounts);
         await expectThrow(
           callOpenWithoutCounterparty(
-            dydxMargin,
+            detaMargin,
             openTx2,
             { shouldContain: true }
           )
@@ -90,7 +90,7 @@ describe('#openWithoutCounterparty', () => {
 
         // works with different nonce
         openTx2.nonce = openTx2.nonce.plus(1)
-        await callOpenWithoutCounterparty(dydxMargin, openTx2);
+        await callOpenWithoutCounterparty(detaMargin, openTx2);
       });
     });
 
@@ -98,7 +98,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if positionId already existed, but was closed', async () => {
         const [
           openTx,
-          dydxMargin,
+          detaMargin,
           owedToken
         ] = await Promise.all([
           setup(accounts),
@@ -107,7 +107,7 @@ describe('#openWithoutCounterparty', () => {
         ]);
 
         // open first position
-        const tx = await callOpenWithoutCounterparty(dydxMargin, openTx);
+        const tx = await callOpenWithoutCounterparty(detaMargin, openTx);
         openTx.id = tx.id;
 
         // close position
@@ -116,20 +116,20 @@ describe('#openWithoutCounterparty', () => {
           openTx.positionOwner,
           openTx.principal.times(2)
         );
-        await dydxMargin.closePositionDirectly(
+        await detaMargin.closePositionDirectly(
           openTx.id,
           openTx.principal,
           openTx.positionOwner,
           { from: openTx.positionOwner }
         );
-        const closed = await dydxMargin.isPositionClosed.call(openTx.id);
+        const closed = await detaMargin.isPositionClosed.call(openTx.id);
         expect(closed).to.be.true;
 
         // doesn't work for same nonce
         const openTx2 = await setup(accounts);
         await expectThrow(
           callOpenWithoutCounterparty(
-            dydxMargin,
+            detaMargin,
             openTx2,
             { shouldContain: true }
           )
@@ -137,7 +137,7 @@ describe('#openWithoutCounterparty', () => {
 
         // works with different nonce
         openTx2.nonce = openTx2.nonce.plus(1)
-        await callOpenWithoutCounterparty(dydxMargin, openTx2);
+        await callOpenWithoutCounterparty(detaMargin, openTx2);
       });
     });
 
@@ -145,7 +145,7 @@ describe('#openWithoutCounterparty', () => {
       it('Succeeds if callTimeLimit is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -153,8 +153,8 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.callTimeLimit = new BigNumber(0);
 
-        const tx = await callOpenWithoutCounterparty(dydxMargin, openTx);
-        const contains = await dydxMargin.containsPosition.call(tx.id);
+        const tx = await callOpenWithoutCounterparty(detaMargin, openTx);
+        const contains = await detaMargin.containsPosition.call(tx.id);
         expect(contains).to.be.true;
       });
     });
@@ -163,7 +163,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if loan owner is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -171,7 +171,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.loanOwner = ADDRESSES.ZERO;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -179,7 +179,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if position owner is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -187,7 +187,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.positionOwner = ADDRESSES.ZERO;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -195,7 +195,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if principal is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -203,7 +203,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.principal = BIGNUMBERS.ZERO;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -211,7 +211,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if owedToken is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -219,7 +219,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.owedToken = ADDRESSES.ZERO;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -227,7 +227,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if owedToken is equal to heldToken', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -235,7 +235,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.owedToken = openTx.heldToken;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -243,7 +243,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if maxDuration is 0', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -251,7 +251,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.maxDuration = BIGNUMBERS.ZERO;
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
 
@@ -259,7 +259,7 @@ describe('#openWithoutCounterparty', () => {
       it('Fails if interestPeriod is > maxDuration', async () => {
         const [
           openTx,
-          dydxMargin
+          detaMargin
         ] = await Promise.all([
           setup(accounts),
           Margin.deployed()
@@ -267,7 +267,7 @@ describe('#openWithoutCounterparty', () => {
 
         openTx.interestPeriod = openTx.maxDuration.plus(1);
 
-        await expectThrow(callOpenWithoutCounterparty(dydxMargin, openTx));
+        await expectThrow(callOpenWithoutCounterparty(detaMargin, openTx));
       });
     });
   });
@@ -314,7 +314,7 @@ async function setup(accounts) {
 }
 
 async function callOpenWithoutCounterparty(
-  dydxMargin,
+  detaMargin,
   openTx,
   { shouldContain = false} = {}
 ) {
@@ -326,11 +326,11 @@ async function callOpenWithoutCounterparty(
   let contains;
 
   if (!shouldContain) {
-    contains = await dydxMargin.containsPosition.call(positionId);
+    contains = await detaMargin.containsPosition.call(positionId);
     expect(contains).to.be.false;
   }
 
-  const response = await dydxMargin.openWithoutCounterparty(
+  const response = await detaMargin.openWithoutCounterparty(
     [
       openTx.positionOwner,
       openTx.owedToken,
@@ -351,17 +351,17 @@ async function callOpenWithoutCounterparty(
     { from: openTx.trader }
   );
 
-  contains = await dydxMargin.containsPosition.call(positionId);
+  contains = await detaMargin.containsPosition.call(positionId);
   expect(contains).to.be.true;
 
   response.id = positionId;
 
-  await expectOpenLog(dydxMargin, positionId, openTx, response);
+  await expectOpenLog(detaMargin, positionId, openTx, response);
 
   return response;
 }
 
-async function expectOpenLog(dydxMargin, positionId, openTx, response) {
+async function expectOpenLog(detaMargin, positionId, openTx, response) {
   expectLog(response.logs[0], 'PositionOpened', {
     positionId: positionId,
     trader: openTx.trader,
@@ -379,8 +379,8 @@ async function expectOpenLog(dydxMargin, positionId, openTx, response) {
     depositInHeldToken: true
   });
 
-  const newOwner = await dydxMargin.getPositionOwner.call(positionId);
-  const newLender = await dydxMargin.getPositionLender.call(positionId);
+  const newOwner = await detaMargin.getPositionOwner.call(positionId);
+  const newLender = await detaMargin.getPositionLender.call(positionId);
   let logIndex = 0;
   if (openTx.positionOwner !== openTx.trader) {
     expectLog(response.logs[++logIndex], 'PositionTransferred', {
@@ -412,14 +412,14 @@ async function expectOpenLog(dydxMargin, positionId, openTx, response) {
   }
 }
 
-async function validate(dydxMargin, openTx, tx, startingBalances) {
+async function validate(detaMargin, openTx, tx, startingBalances) {
   const [
     position,
     positionBalance,
     { traderHeldToken, vaultHeldToken }
   ] = await Promise.all([
-    getPosition(dydxMargin, tx.id),
-    dydxMargin.getPositionBalance.call(tx.id),
+    getPosition(detaMargin, tx.id),
+    detaMargin.getPositionBalance.call(tx.id),
     getBalances(openTx)
   ]);
 

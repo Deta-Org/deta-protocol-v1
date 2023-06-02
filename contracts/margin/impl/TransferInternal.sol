@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import { PositionOwner } from "../interfaces/owner/PositionOwner.sol";
 
 /**
  * @title TransferInternal
- * @author dYdX
+ * @author deta
  *
  * This library contains the implementation for transferring ownership of loans and positions.
  */

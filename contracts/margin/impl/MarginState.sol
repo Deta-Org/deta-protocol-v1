@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import { MarginCommon } from "./MarginCommon.sol";
 
 /**
  * @title MarginState
- * @author dYdX
+ * @author deta
  *
  * Contains state for the Margin contract. Also used by libraries that implement Margin functions.
  */

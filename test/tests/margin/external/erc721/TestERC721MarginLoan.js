@@ -30,7 +30,7 @@ describe('ERC721MarginLoan', () => {
 
   // ============ Constants ============
 
-  let dydxMargin;
+  let detaMargin;
   let loanContract;
   let owedToken, heldToken;
   let salt = 471311;
@@ -40,7 +40,7 @@ describe('ERC721MarginLoan', () => {
 
   async function loadContracts() {
     [
-      dydxMargin,
+      detaMargin,
       owedToken,
       heldToken
     ] = await Promise.all([
@@ -48,7 +48,7 @@ describe('ERC721MarginLoan', () => {
       OwedToken.deployed(),
       HeldToken.deployed()
     ]);
-    loanContract = await ERC721MarginLoan.new(dydxMargin.address);
+    loanContract = await ERC721MarginLoan.new(detaMargin.address);
   }
 
   async function setUpLoan(accounts, payer = null) {
@@ -59,7 +59,7 @@ describe('ERC721MarginLoan', () => {
     openTx.loanOffering.owner = loanContract.address;
     openTx.loanOffering.signature = await signLoanOffering(openTx.loanOffering);
     await issueTokensAndSetAllowances(openTx);
-    const temp = await callOpenPosition(dydxMargin, openTx);
+    const temp = await callOpenPosition(detaMargin, openTx);
     openTx.id = temp.id;
 
     const owner = await loanContract.ownerOf.call(uint256(openTx.id));
@@ -86,7 +86,7 @@ describe('ERC721MarginLoan', () => {
       openTx.owner,
       amount.times(100)
     );
-    await dydxMargin.closePositionDirectly(
+    await detaMargin.closePositionDirectly(
       openTx.id,
       amount,
       openTx.owner,
@@ -111,7 +111,7 @@ describe('ERC721MarginLoan', () => {
         loanName,
         loanSymbol
       ] = await Promise.all([
-        loanContract.DYDX_MARGIN.call(),
+        loanContract.deta_MARGIN.call(),
         loanContract.approvedManagers.call(accounts[0], accounts[1]),
         loanContract.owedTokensRepaidSinceLastWithdraw.call(BYTES32.TEST[0]),
         loanContract.owedTokenAddress.call(BYTES32.TEST[0]),
@@ -120,7 +120,7 @@ describe('ERC721MarginLoan', () => {
       ]);
 
       // Check margin address
-      expect(marginAddress).to.equal(dydxMargin.address);
+      expect(marginAddress).to.equal(detaMargin.address);
 
       // Check random values in mappings
       expect(isApproved).to.be.false;
@@ -128,7 +128,7 @@ describe('ERC721MarginLoan', () => {
       expect(owedTokenAddress).to.equal(ADDRESSES.ZERO);
 
       // Check ERC721 values
-      expect(loanName).to.equal("dYdX ERC721 Margin Loans");
+      expect(loanName).to.equal("deta ERC721 Margin Loans");
       expect(loanSymbol).to.equal("d/LO");
     });
   });
@@ -223,7 +223,7 @@ describe('ERC721MarginLoan', () => {
     it('succeeds when called by ownerOf', async () => {
       await loanContract.untokenizeLoan(openTx.id, receiver, { from: lender });
       await expectNoToken(openTx.id);
-      const newOwner = await dydxMargin.getPositionLender.call(openTx.id);
+      const newOwner = await detaMargin.getPositionLender.call(openTx.id);
       expect(newOwner).to.equal(receiver);
     });
 
@@ -264,7 +264,7 @@ describe('ERC721MarginLoan', () => {
       const sellOrder = await createSignedV1SellOrder(accounts);
       await issueTokensAndSetAllowancesForClose(openTx2, sellOrder);
       await callClosePosition(
-        dydxMargin,
+        detaMargin,
         openTx2,
         sellOrder,
         openTx2.principal.div(2)
@@ -272,12 +272,12 @@ describe('ERC721MarginLoan', () => {
 
       // transfer loans to token contract
       await Promise.all([
-        dydxMargin.transferLoan(
+        detaMargin.transferLoan(
           openTx1.id,
           loanContract.address,
           { from: openTx1.loanOffering.owner }
         ),
-        dydxMargin.transferLoan(
+        detaMargin.transferLoan(
           openTx2.id,
           loanContract.address,
           { from: openTx2.loanOffering.owner }
@@ -300,7 +300,7 @@ describe('ERC721MarginLoan', () => {
         loanContract.owedTokenAddress.call(openTx2.id),
         loanContract.owedTokensRepaidSinceLastWithdraw.call(openTx1.id),
         loanContract.owedTokensRepaidSinceLastWithdraw.call(openTx2.id),
-        dydxMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id)
+        detaMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id)
       ]);
 
       // expect certain values
@@ -331,8 +331,8 @@ describe('ERC721MarginLoan', () => {
 
     async function setupIncreaseLoanOnBehalfOf(adder) {
       const [principal, balance] = await Promise.all([
-        dydxMargin.getPositionPrincipal(openTx.id),
-        dydxMargin.getPositionBalance(openTx.id),
+        detaMargin.getPositionPrincipal(openTx.id),
+        detaMargin.getPositionBalance(openTx.id),
       ]);
       addedPrincipal = openTx.principal.div(2).floor();
       heldTokenAmount = getPartialAmount(
@@ -347,14 +347,14 @@ describe('ERC721MarginLoan', () => {
     async function doIncrease(adder, throws) {
       if (throws) {
         await expectThrow(
-          dydxMargin.increaseWithoutCounterparty(
+          detaMargin.increaseWithoutCounterparty(
             openTx.id,
             addedPrincipal,
             { from: adder }
           )
         );
       } else {
-        await dydxMargin.increaseWithoutCounterparty(
+        await detaMargin.increaseWithoutCounterparty(
           openTx.id,
           addedPrincipal,
           { from: adder }
@@ -380,7 +380,7 @@ describe('ERC721MarginLoan', () => {
       const adder = openTx.loanOffering.payer;
       await setupIncreaseLoanOnBehalfOf(adder);
       await Promise.all([
-        dydxMargin.transferPosition(openTx.id, adder, { from: openTx.owner }),
+        detaMargin.transferPosition(openTx.id, adder, { from: openTx.owner }),
         loanContract.transferFrom(adder, loanContract.address, uint256(openTx.id), { from: adder })
       ]);
       await doIncrease(adder, true);
@@ -404,17 +404,17 @@ describe('ERC721MarginLoan', () => {
       const adder = openTx.loanOffering.payer;
 
       const [principal, balance] = await Promise.all([
-        dydxMargin.getPositionPrincipal(openTx.id),
-        dydxMargin.getPositionBalance(openTx.id),
+        detaMargin.getPositionPrincipal(openTx.id),
+        detaMargin.getPositionBalance(openTx.id),
       ]);
 
       await setupIncreaseLoanOnBehalfOf(adder);
-      await dydxMargin.transferPosition(openTx.id, adder, { from: openTx.owner });
+      await detaMargin.transferPosition(openTx.id, adder, { from: openTx.owner });
       await doIncrease(adder, false);
 
       const [finalBalance, finalPrincipal] = await Promise.all([
-        dydxMargin.getPositionBalance.call(openTx.id),
-        dydxMargin.getPositionPrincipal.call(openTx.id),
+        detaMargin.getPositionBalance.call(openTx.id),
+        detaMargin.getPositionPrincipal.call(openTx.id),
       ]);
       expect(finalPrincipal).to.be.bignumber.eq(principal.plus(addedPrincipal));
       expect(finalBalance).to.be.bignumber.eq(balance.plus(heldTokenAmount));
@@ -438,7 +438,7 @@ describe('ERC721MarginLoan', () => {
 
     it('fails if not authorized', async () => {
       await expectThrow(
-        dydxMargin.marginCall(
+        detaMargin.marginCall(
           openTx.id,
           BIGNUMBERS.ZERO,
           { from: rando }
@@ -447,12 +447,12 @@ describe('ERC721MarginLoan', () => {
     });
 
     it('succeeds if authorized', async () => {
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         openTx.id,
         BIGNUMBERS.ZERO,
         { from: manager }
       );
-      const isCalled = await dydxMargin.isPositionCalled.call(openTx.id);
+      const isCalled = await detaMargin.isPositionCalled.call(openTx.id);
       expect(isCalled).to.be.true;
     });
   });
@@ -470,18 +470,18 @@ describe('ERC721MarginLoan', () => {
     beforeEach('set up loan and margin-call', async () => {
       await setUpLoan(accounts);
       await loanContract.approveManager(manager, true, { from: openTx.loanOffering.payer });
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         openTx.id,
         BIGNUMBERS.ZERO,
         { from: openTx.loanOffering.payer }
       );
-      const isCalled = await dydxMargin.isPositionCalled.call(openTx.id);
+      const isCalled = await detaMargin.isPositionCalled.call(openTx.id);
       expect(isCalled).to.be.true;
     });
 
     it('fails if not authorized', async () => {
       await expectThrow(
-        dydxMargin.cancelMarginCall(
+        detaMargin.cancelMarginCall(
           openTx.id,
           { from: rando }
         )
@@ -489,11 +489,11 @@ describe('ERC721MarginLoan', () => {
     });
 
     it('succeeds if authorized', async () => {
-      await dydxMargin.cancelMarginCall(
+      await detaMargin.cancelMarginCall(
         openTx.id,
         { from: manager }
       );
-      const isCalled = await dydxMargin.isPositionCalled.call(openTx.id);
+      const isCalled = await detaMargin.isPositionCalled.call(openTx.id);
       expect(isCalled).to.be.false;
     });
   });
@@ -509,7 +509,7 @@ describe('ERC721MarginLoan', () => {
 
     beforeEach('set up loan', async () => {
       await setUpLoan(accounts);
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         openTx.id,
         BIGNUMBERS.ZERO,
         { from: openTx.loanOffering.payer }
@@ -520,10 +520,10 @@ describe('ERC721MarginLoan', () => {
     it('succeeds if caller is owner', async () => {
       const [heldToken1, heldTokenInVault] = await Promise.all([
         heldToken.balanceOf.call(rando),
-        dydxMargin.getPositionBalance.call(openTx.id)
+        detaMargin.getPositionBalance.call(openTx.id)
       ]);
 
-      await dydxMargin.forceRecoverCollateral(
+      await detaMargin.forceRecoverCollateral(
         openTx.id,
         rando,
         { from: openTx.loanOffering.payer  }
@@ -531,8 +531,8 @@ describe('ERC721MarginLoan', () => {
 
       // expect proper state of the position
       const [isClosed, isCalled, heldToken2] = await Promise.all([
-        dydxMargin.isPositionClosed.call(openTx.id),
-        dydxMargin.isPositionCalled.call(openTx.id),
+        detaMargin.isPositionClosed.call(openTx.id),
+        detaMargin.isPositionCalled.call(openTx.id),
         heldToken.balanceOf.call(rando)
       ]);
       expect(isClosed).to.be.true;
@@ -542,7 +542,7 @@ describe('ERC721MarginLoan', () => {
 
     it('fails for arbitrary caller even if recipient is owner', async () => {
       await expectThrow(
-        dydxMargin.forceRecoverCollateral(
+        detaMargin.forceRecoverCollateral(
           openTx.id,
           openTx.loanOffering.payer,
           { from: rando }
@@ -556,7 +556,7 @@ describe('ERC721MarginLoan', () => {
       await loanContract.approveManager(manager, true, { from: openTx.loanOffering.payer });
 
       await expectThrow(
-        dydxMargin.forceRecoverCollateral(
+        detaMargin.forceRecoverCollateral(
           openTx.id,
           rando,
           { from: manager }
@@ -564,7 +564,7 @@ describe('ERC721MarginLoan', () => {
       );
 
       await expectThrow(
-        dydxMargin.forceRecoverCollateral(
+        detaMargin.forceRecoverCollateral(
           openTx.id,
           manager,
           { from: manager }
@@ -576,7 +576,7 @@ describe('ERC721MarginLoan', () => {
       const manager = accounts[9];
       await loanContract.approveManager(manager, true, { from: openTx.loanOffering.payer });
 
-      await dydxMargin.forceRecoverCollateral(
+      await detaMargin.forceRecoverCollateral(
         openTx.id,
         openTx.loanOffering.payer,
         { from: manager }
@@ -661,12 +661,12 @@ describe('ERC721MarginLoan', () => {
       halfClose = openTx1.principal.div(2).floor();
 
       // transfer loans to erc721 contract
-      await dydxMargin.transferLoan(
+      await detaMargin.transferLoan(
         openTx2.id,
         lender2,
         { from: openTx2.loanOffering.owner }
       );
-      await dydxMargin.transferLoan(
+      await detaMargin.transferLoan(
         openTx2.id,
         loanContract.address,
         { from: lender2 }
@@ -694,18 +694,18 @@ describe('ERC721MarginLoan', () => {
 
       // Get initial owedTokenRepaid for both
       const [totalRepaid1Before, totalRepaid2Before] = await Promise.all([
-        dydxMargin.getTotalOwedTokenRepaidToLender.call(openTx1.id),
-        dydxMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id)
+        detaMargin.getTotalOwedTokenRepaidToLender.call(openTx1.id),
+        detaMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id)
       ]);
 
       // Halfway close #1, completely close #2
       await closePosition(openTx1, openTx1.principal.div(2).floor());
       await closePosition(openTx2, openTx2.principal.div(2).floor());
       const [totalRepaid1After, totalRepaid2After, isClosed1, isClosed2] = await Promise.all([
-        dydxMargin.getTotalOwedTokenRepaidToLender.call(openTx1.id),
-        dydxMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id),
-        dydxMargin.isPositionClosed.call(openTx1.id),
-        dydxMargin.isPositionClosed.call(openTx2.id)
+        detaMargin.getTotalOwedTokenRepaidToLender.call(openTx1.id),
+        detaMargin.getTotalOwedTokenRepaidToLender.call(openTx2.id),
+        detaMargin.isPositionClosed.call(openTx1.id),
+        detaMargin.isPositionClosed.call(openTx2.id)
       ]);
       expect(isClosed1).to.be.false;
       expect(isClosed2).to.be.true;

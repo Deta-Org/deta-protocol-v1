@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,13 +25,13 @@ import { MarginCommon } from "../../impl/MarginCommon.sol";
 
 /**
  * @title MarginHelper
- * @author dYdX
+ * @author deta
  *
  * This library contains helper functions for interacting with Margin
  */
 library MarginHelper {
     function getPosition(
-        address DYDX_MARGIN,
+        address deta_MARGIN,
         bytes32 positionId
     )
         internal
@@ -42,7 +42,7 @@ library MarginHelper {
             address[4] memory addresses,
             uint256[2] memory values256,
             uint32[6]  memory values32
-        ) = Margin(DYDX_MARGIN).getPosition(positionId);
+        ) = Margin(deta_MARGIN).getPosition(positionId);
 
         return MarginCommon.Position({
             owedToken: addresses[0],

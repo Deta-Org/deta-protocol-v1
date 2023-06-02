@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,9 +41,9 @@ import { TransferImpl } from "./impl/TransferImpl.sol";
 
 /**
  * @title Margin
- * @author dYdX
+ * @author deta
  *
- * This contract is used to facilitate margin trading as per the dYdX protocol
+ * This contract is used to facilitate margin trading as per the deta protocol
  */
 contract Margin is
     ReentrancyGuard,

@@ -21,12 +21,12 @@ const { createSignedV1SellOrder } = require('../../../../helpers/ZeroExV1Helper'
 const FACTORIES = { ERC20ShortFactory, ERC20LongFactory };
 
 contract('ERC20PositionFactory', accounts => {
-  let dydxMargin;
+  let detaMargin;
   let salt = 112345;
 
   before('retrieve deployed contracts', async () => {
     [
-      dydxMargin
+      detaMargin
     ] = await Promise.all([
       Margin.deployed()
     ]);
@@ -43,8 +43,8 @@ contract('ERC20PositionFactory', accounts => {
           trustedRecipientsExpected,
           trustedWithdrawersExpected,
         );
-        const dydxMarginAddress = await contract.DYDX_MARGIN.call();
-        expect(dydxMarginAddress).to.equal(Margin.address);
+        const detaMarginAddress = await contract.deta_MARGIN.call();
+        expect(detaMarginAddress).to.equal(Margin.address);
 
         const numRecipients = trustedRecipientsExpected.length;
         for (let i = 0; i < numRecipients; i++) {
@@ -74,9 +74,9 @@ contract('ERC20PositionFactory', accounts => {
         balance,
         principal
       ] = await Promise.all([
-        dydxMargin.getPositionOwner.call(openTx.id),
-        dydxMargin.getPositionBalance.call(openTx.id),
-        dydxMargin.getPositionPrincipal.call(openTx.id)
+        detaMargin.getPositionOwner.call(openTx.id),
+        detaMargin.getPositionBalance.call(openTx.id),
+        detaMargin.getPositionPrincipal.call(openTx.id)
       ]);
 
       let erc20Contract;
@@ -88,7 +88,7 @@ contract('ERC20PositionFactory', accounts => {
 
       const constants = await getERC20PositionConstants(erc20Contract);
 
-      expect(constants.DYDX_MARGIN).to.equal(dydxMargin.address);
+      expect(constants.deta_MARGIN).to.equal(detaMargin.address);
       expect(constants.POSITION_ID).to.equal(openTx.id);
       expect(constants.state).to.be.bignumber.equal(TOKENIZED_POSITION_STATE.OPEN);
       expect(constants.INITIAL_TOKEN_HOLDER).to.equal(trader);
@@ -132,13 +132,13 @@ contract('ERC20PositionFactory', accounts => {
         const sellOrder = await createSignedV1SellOrder(accounts, { salt: salt++ });
         await issueTokensAndSetAllowancesForClose(openTx, sellOrder);
         await callClosePosition(
-          dydxMargin,
+          detaMargin,
           openTx,
           sellOrder,
           openTx.principal.div(2).floor());
 
         // transfer position to ERC20PositionFactory
-        await dydxMargin.transferPosition(openTx.id, FACTORIES[factory].address);
+        await detaMargin.transferPosition(openTx.id, FACTORIES[factory].address);
 
         await checkSuccess(openTx, factory);
       }

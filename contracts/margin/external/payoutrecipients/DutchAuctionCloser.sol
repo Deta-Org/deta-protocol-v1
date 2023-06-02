@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ import { MarginHelper } from "../lib/MarginHelper.sol";
 
 /**
  * @title DutchAuctionCloser
- * @author dYdX
+ * @author deta
  *
  * Contract for allowing anyone to close a called-in position by using a Dutch auction mechanism to
  * give a fair price to the position owner. Price paid to the owner decreases linearly over time.
@@ -212,7 +212,7 @@ contract DutchAuctionCloser is
         uint256 auctionStartTimestamp;
         uint256 auctionEndTimestamp;
 
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, positionId);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, positionId);
 
         uint256 maxTimestamp = uint256(position.startTimestamp).add(position.maxDuration);
         uint256 callTimestamp = uint256(position.callTimestamp);

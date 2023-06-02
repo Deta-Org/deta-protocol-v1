@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import { AccessControlledBase } from "./AccessControlledBase.sol";
 
 /**
  * @title StaticAccessControlled
- * @author dYdX
+ * @author deta
  *
  * Allows for functions to be access controled
  * Permissions cannot be changed after a grace period

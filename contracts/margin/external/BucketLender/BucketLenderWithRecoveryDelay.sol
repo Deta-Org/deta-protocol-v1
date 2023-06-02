@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import { MarginCommon } from "../../impl/MarginCommon.sol";
 
 /**
  * @title BucketLenderWithRecoveryDelay
- * @author dYdX
+ * @author deta
  *
  * Extension of BucketLender that delays the force-recovery time
  */
@@ -78,7 +78,7 @@ contract BucketLenderWithRecoveryDelay is BucketLender
         onlyPosition(positionId)
         returns (address)
     {
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, positionId);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, positionId);
         uint256 positionEnd = uint256(position.startTimestamp).add(position.maxDuration);
         if (position.callTimestamp > 0) {
             uint256 marginCallEnd = uint256(position.callTimestamp).add(position.callTimeLimit);

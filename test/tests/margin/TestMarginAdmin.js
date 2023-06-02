@@ -32,14 +32,14 @@ describe('MarginAdmin', () => {
   describe('Constructor', () => {
     contract('Margin', accounts => {
       it('Sets OperationState to OPERATIONAL', async () => {
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
 
         const [
           operationState,
           owner
         ] = await Promise.all([
-          dydxMargin.operationState.call(),
-          dydxMargin.owner.call()
+          detaMargin.operationState.call(),
+          detaMargin.owner.call()
         ]);
 
         expect(operationState.toNumber()).to.eq(OperationState.OPERATIONAL);
@@ -51,37 +51,37 @@ describe('MarginAdmin', () => {
   describe('#setOperationState', () => {
     contract('Margin', () => {
       it('Sets OperationState correctly', async () => {
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
 
-        await dydxMargin.setOperationState(OperationState.CLOSE_ONLY);
-        await expectOperationState(dydxMargin, OperationState.CLOSE_ONLY);
+        await detaMargin.setOperationState(OperationState.CLOSE_ONLY);
+        await expectOperationState(detaMargin, OperationState.CLOSE_ONLY);
       });
     });
 
     contract('Margin', () => {
       it('Does not allow invalid OperationStates', async () => {
-        const dydxMargin = await Margin.deployed();
-        await expectThrow(dydxMargin.setOperationState(OperationState.INVALID));
+        const detaMargin = await Margin.deployed();
+        await expectThrow(detaMargin.setOperationState(OperationState.INVALID));
       });
     });
 
     contract('Margin', accounts => {
       it('Only allows owner to set', async () => {
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
 
         await expectThrow(
-          dydxMargin.setOperationState(OperationState.CLOSE_ONLY, { from: accounts[2] })
+          detaMargin.setOperationState(OperationState.CLOSE_ONLY, { from: accounts[2] })
         );
-        await expectOperationState(dydxMargin, OperationState.OPERATIONAL);
+        await expectOperationState(detaMargin, OperationState.OPERATIONAL);
       });
     });
 
     contract('Margin', () => {
       it('Does nothing on set to same state', async () => {
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
 
-        await dydxMargin.setOperationState(OperationState.OPERATIONAL);
-        await expectOperationState(dydxMargin, OperationState.OPERATIONAL);
+        await detaMargin.setOperationState(OperationState.OPERATIONAL);
+        await expectOperationState(detaMargin, OperationState.OPERATIONAL);
       });
     });
   });
@@ -90,37 +90,37 @@ describe('MarginAdmin', () => {
     contract('Margin', accounts => {
       it('Only allows #openPosition while OPERATIONAL', async () => {
         const openTx = await createOpenTx(accounts);
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
 
         await issueTokensAndSetAllowances(openTx);
 
-        await dydxMargin.setOperationState(OperationState.CLOSE_ONLY);
-        await expectThrow(callOpenPosition(dydxMargin, openTx));
+        await detaMargin.setOperationState(OperationState.CLOSE_ONLY);
+        await expectThrow(callOpenPosition(detaMargin, openTx));
 
-        await dydxMargin.setOperationState(OperationState.OPERATIONAL);
-        await callOpenPosition(dydxMargin, openTx);
+        await detaMargin.setOperationState(OperationState.OPERATIONAL);
+        await callOpenPosition(detaMargin, openTx);
       });
     });
 
     contract('Margin', accounts => {
       it('Only allows #cancelMarginCall while OPERATIONAL', async () => {
-        const dydxMargin = await Margin.deployed();
+        const detaMargin = await Margin.deployed();
         const openTx = await doOpenPosition(accounts);
 
-        await dydxMargin.marginCall(
+        await detaMargin.marginCall(
           openTx.id,
           new BigNumber(10),
           { from: openTx.loanOffering.payer }
         );
 
-        await dydxMargin.setOperationState(OperationState.CLOSE_ONLY);
-        await expectThrow(dydxMargin.cancelMarginCall(
+        await detaMargin.setOperationState(OperationState.CLOSE_ONLY);
+        await expectThrow(detaMargin.cancelMarginCall(
           openTx.id,
           { from: openTx.loanOffering.payer }
         ));
 
-        await dydxMargin.setOperationState(OperationState.OPERATIONAL);
-        await dydxMargin.cancelMarginCall(
+        await detaMargin.setOperationState(OperationState.OPERATIONAL);
+        await detaMargin.cancelMarginCall(
           openTx.id,
           { from: openTx.loanOffering.payer }
         );
@@ -129,7 +129,7 @@ describe('MarginAdmin', () => {
 
     contract('Margin', accounts => {
       it('Allows #deposit while OPERATIONAL', async () => {
-        const [dydxMargin, heldToken] = await Promise.all([
+        const [detaMargin, heldToken] = await Promise.all([
           Margin.deployed(),
           HeldToken.deployed()
         ]);
@@ -143,15 +143,15 @@ describe('MarginAdmin', () => {
           TokenProxy.address
         );
 
-        await dydxMargin.setOperationState(OperationState.CLOSE_ONLY);
-        await expectThrow(dydxMargin.depositCollateral(
+        await detaMargin.setOperationState(OperationState.CLOSE_ONLY);
+        await expectThrow(detaMargin.depositCollateral(
           openTx.id,
           amount,
           { from: openTx.trader }
         ));
 
-        await dydxMargin.setOperationState(OperationState.OPERATIONAL);
-        await dydxMargin.depositCollateral(
+        await detaMargin.setOperationState(OperationState.OPERATIONAL);
+        await detaMargin.depositCollateral(
           openTx.id,
           amount,
           { from: openTx.trader }
@@ -165,21 +165,21 @@ describe('MarginAdmin', () => {
 
     async function test(accounts, state, shouldFail = false) {
       const openTx = await doOpenPosition(accounts);
-      const dydxMargin = await Margin.deployed();
+      const detaMargin = await Margin.deployed();
       await issueForDirectClose(openTx);
 
-      await dydxMargin.setOperationState(state);
+      await detaMargin.setOperationState(state);
       if (shouldFail) {
         await expectThrow(
           callCancelLoanOffer(
-            dydxMargin,
+            detaMargin,
             openTx.loanOffering,
             cancelAmount
           )
         );
       } else {
         await callCancelLoanOffer(
-          dydxMargin,
+          detaMargin,
           openTx.loanOffering,
           cancelAmount
         );
@@ -216,17 +216,17 @@ describe('MarginAdmin', () => {
 
     async function test(accounts, state, shouldFail = false) {
       const openTx = await doOpenPosition(accounts);
-      const [sellOrder, dydxMargin] = await Promise.all([
+      const [sellOrder, detaMargin] = await Promise.all([
         createSignedV1SellOrder(accounts),
         Margin.deployed()
       ]);
       await issueTokensAndSetAllowancesForClose(openTx, sellOrder);
 
-      await dydxMargin.setOperationState(state);
+      await detaMargin.setOperationState(state);
       if (shouldFail) {
-        await expectThrow(callClosePosition(dydxMargin, openTx, sellOrder, closeAmount));
+        await expectThrow(callClosePosition(detaMargin, openTx, sellOrder, closeAmount));
       } else {
-        await callClosePosition(dydxMargin, openTx, sellOrder, closeAmount);
+        await callClosePosition(detaMargin, openTx, sellOrder, closeAmount);
       }
     }
 
@@ -260,11 +260,11 @@ describe('MarginAdmin', () => {
     const closeAmount = new BigNumber(100000);
     async function test(accounts, state) {
       const openTx = await doOpenPosition(accounts);
-      const dydxMargin = await Margin.deployed();
+      const detaMargin = await Margin.deployed();
       await issueForDirectClose(openTx);
 
-      await dydxMargin.setOperationState(state);
-      await callClosePositionDirectly(dydxMargin, openTx, closeAmount);
+      await detaMargin.setOperationState(state);
+      await callClosePositionDirectly(detaMargin, openTx, closeAmount);
     }
 
     contract('Margin', accounts => {
@@ -293,7 +293,7 @@ describe('MarginAdmin', () => {
   });
 });
 
-async function expectOperationState(dydxMargin, state) {
-  const operationState = await dydxMargin.operationState.call();
+async function expectOperationState(detaMargin, state) {
+  const operationState = await detaMargin.operationState.call();
   expect(operationState.toNumber()).to.eq(state);
 }

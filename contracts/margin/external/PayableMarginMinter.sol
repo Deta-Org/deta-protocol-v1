@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import { TokenInteract } from "../../lib/TokenInteract.sol";
 
 /**
  * @title PayableMarginMinter
- * @author dYdX
+ * @author deta
  *
  * Contract for allowing anyone to mint short or margin-long tokens using a payable function
  */
@@ -37,7 +37,7 @@ contract PayableMarginMinter is ReentrancyGuard {
 
     // ============ State Variables ============
 
-    address public DYDX_MARGIN;
+    address public deta_MARGIN;
 
     address public WETH;
 
@@ -49,11 +49,11 @@ contract PayableMarginMinter is ReentrancyGuard {
     )
         public
     {
-        DYDX_MARGIN = margin;
+        deta_MARGIN = margin;
         WETH = weth;
 
         // WETH approval of maxInt does not decrease
-        address tokenProxy = Margin(DYDX_MARGIN).getTokenProxyAddress();
+        address tokenProxy = Margin(deta_MARGIN).getTokenProxyAddress();
         WETH.approve(tokenProxy, MathHelpers.maxUint256());
     }
 
@@ -133,7 +133,7 @@ contract PayableMarginMinter is ReentrancyGuard {
         WETH9(WETH).deposit.value(msg.value)();
 
         // mint the margin tokens
-        Margin(DYDX_MARGIN).increasePosition(
+        Margin(deta_MARGIN).increasePosition(
             positionId,
             addresses,
             values256,
@@ -144,7 +144,7 @@ contract PayableMarginMinter is ReentrancyGuard {
         );
 
         // send the margin tokens back to the user
-        address marginTokenContract = Margin(DYDX_MARGIN).getPositionOwner(positionId);
+        address marginTokenContract = Margin(deta_MARGIN).getPositionOwner(positionId);
         uint256 numTokens = marginTokenContract.balanceOf(address(this));
         marginTokenContract.transfer(msg.sender, numTokens);
 

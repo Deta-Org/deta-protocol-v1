@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import { ExchangeWrapper } from "../../interfaces/ExchangeWrapper.sol";
 
 /**
  * @title ERC20PositionWithdrawerV2
- * @author dYdX
+ * @author deta
  *
  * Proxy contract to withdraw from an ERC20Position and exchange the withdrawn tokens on a DEX, or
  * to unwrap WETH to ETH.

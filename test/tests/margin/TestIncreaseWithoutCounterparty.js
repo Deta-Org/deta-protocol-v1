@@ -23,7 +23,7 @@ describe('#increaseWithoutCounterparty', () => {
   contract('Margin', accounts => {
     it('succeeds on valid inputs', async () => {
       const {
-        dydxMargin,
+        detaMargin,
         openTx,
         addAmount,
         adder,
@@ -33,7 +33,7 @@ describe('#increaseWithoutCounterparty', () => {
         testLoanOwner
       } = await setup(accounts);
 
-      const tx = await dydxMargin.increaseWithoutCounterparty(
+      const tx = await detaMargin.increaseWithoutCounterparty(
         openTx.id,
         addAmount,
         { from: adder }
@@ -41,13 +41,13 @@ describe('#increaseWithoutCounterparty', () => {
 
       console.log('\tMargin.increaseWithoutCounterparty gas used: ' + tx.receipt.gasUsed);
 
-      const position = await getPosition(dydxMargin, openTx.id);
+      const position = await getPosition(detaMargin, openTx.id);
 
       expect(position.principal).to.be.bignumber.eq(
         openTx.principal.plus(addAmount)
       );
 
-      const finalBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+      const finalBalance = await detaMargin.getPositionBalance.call(openTx.id);
       const startingHeldTokenBalancePerUnit = getPartialAmount(startingBalance, openTx.principal);
       const finalHeldTokenPerUnit =
         getPartialAmount(finalBalance, openTx.principal.plus(addAmount));
@@ -73,12 +73,12 @@ describe('#increaseWithoutCounterparty', () => {
   contract('Margin', accounts => {
     it('disallows increasing by 0', async () => {
       const {
-        dydxMargin,
+        detaMargin,
         openTx,
         adder
       } = await setup(accounts);
 
-      await expectThrow(dydxMargin.increaseWithoutCounterparty(
+      await expectThrow(detaMargin.increaseWithoutCounterparty(
         openTx.id,
         0,
         { from: adder }
@@ -89,7 +89,7 @@ describe('#increaseWithoutCounterparty', () => {
   contract('Margin', accounts => {
     it('does not allow increasing after maximum duration', async () => {
       const {
-        dydxMargin,
+        detaMargin,
         openTx,
         adder,
         addAmount
@@ -97,7 +97,7 @@ describe('#increaseWithoutCounterparty', () => {
 
       await wait(openTx.loanOffering.maxDuration + 1);
 
-      await expectThrow(dydxMargin.increaseWithoutCounterparty(
+      await expectThrow(detaMargin.increaseWithoutCounterparty(
         openTx.id,
         addAmount,
         { from: adder }
@@ -108,7 +108,7 @@ describe('#increaseWithoutCounterparty', () => {
   async function setup(accounts) {
     const [
       openTx,
-      dydxMargin,
+      detaMargin,
       heldToken,
       testPositionOwner,
       testLoanOwner
@@ -125,13 +125,13 @@ describe('#increaseWithoutCounterparty', () => {
     openTx.loanOffering.signature = await signLoanOffering(openTx.loanOffering);
 
     await issueTokensAndSetAllowances(openTx);
-    const response = await callOpenPosition(dydxMargin, openTx);
+    const response = await callOpenPosition(detaMargin, openTx);
     openTx.id = response.id;
 
     const [ownsPosition, ownsLoan, startingBalance] = await Promise.all([
       testPositionOwner.hasReceived.call(openTx.id, openTx.trader),
       testLoanOwner.hasReceived.call(openTx.id, openTx.loanOffering.payer),
-      dydxMargin.getPositionBalance.call(openTx.id),
+      detaMargin.getPositionBalance.call(openTx.id),
     ]);
 
     expect(ownsPosition).to.be.true;
@@ -153,7 +153,7 @@ describe('#increaseWithoutCounterparty', () => {
     );
 
     return {
-      dydxMargin,
+      detaMargin,
       openTx,
       addAmount,
       adder,

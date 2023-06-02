@@ -25,8 +25,8 @@ contract('BucketLenderFactory', () => {
     it('sets constants correctly', async () => {
       const marginAddress = ADDRESSES.TEST[0];
       const factory = await BucketLenderFactory.new(marginAddress);
-      const dydxMargin = await factory.DYDX_MARGIN.call();
-      expect(dydxMargin).to.be.eq(marginAddress);
+      const detaMargin = await factory.deta_MARGIN.call();
+      expect(detaMargin).to.be.eq(marginAddress);
     });
   });
 
@@ -91,7 +91,7 @@ contract('BucketLenderFactory', () => {
         bl_notWithdrawerNotOkay,
         bl_owner,
       ] = await Promise.all([
-        bucketLender.DYDX_MARGIN.call(),
+        bucketLender.deta_MARGIN.call(),
         bucketLender.POSITION_ID.call(),
         bucketLender.HELD_TOKEN.call(),
         bucketLender.OWED_TOKEN.call(),

@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import { BucketLender } from "./BucketLender.sol";
 
 /**
  * @title BucketLenderFactory
- * @author dYdX
+ * @author deta
  *
  * Contract that allows anyone to deploy a BucketLender contract by sending a transaction.
  */
@@ -41,8 +41,8 @@ contract BucketLenderFactory {
 
     // ============ State Variables ============
 
-    // Address of the Margin contract for the dYdX Margin Trading Protocol
-    address public DYDX_MARGIN;
+    // Address of the Margin contract for the deta Margin Trading Protocol
+    address public deta_MARGIN;
 
     // ============ Constructor ============
 
@@ -51,7 +51,7 @@ contract BucketLenderFactory {
     )
         public
     {
-        DYDX_MARGIN = margin;
+        deta_MARGIN = margin;
     }
 
     // ============ Public Functions ============
@@ -89,7 +89,7 @@ contract BucketLenderFactory {
         returns (address)
     {
         address newBucketLender = new BucketLender(
-            DYDX_MARGIN,
+            deta_MARGIN,
             positionId,
             heldToken,
             owedToken,

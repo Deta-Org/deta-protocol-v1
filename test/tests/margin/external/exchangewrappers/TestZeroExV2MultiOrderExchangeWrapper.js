@@ -285,7 +285,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
     contract('ZeroExV2MultiOrderExchangeWrapper', accounts => {
       it('succeeds for an expired and partially-filled order', async () => {
         const {
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
           exchangeWrapper,
         } = await setup(accounts);
@@ -303,7 +303,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount,
@@ -332,7 +332,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('succeeds for multiple orders of varying state', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -354,7 +354,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await grantTokens(order1, exchangeWrapper, amount1);
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount1,
@@ -385,7 +385,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('successfully executes a trade', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -398,12 +398,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         const startingBalances = await getBalances(
           order,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -415,7 +415,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
       });
     });
@@ -424,7 +424,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('successfully executes multiple trades', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -437,12 +437,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         let startingBalances = await getBalances(
           order,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -454,7 +454,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
 
         amount = new BigNumber(baseAmount.times(1.5));
@@ -462,12 +462,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         startingBalances = await getBalances(
           order,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -479,7 +479,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
 
         amount = new BigNumber(baseAmount.times(1.2));
@@ -487,12 +487,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         startingBalances = await getBalances(
           order,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -504,7 +504,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
       });
     });
@@ -513,7 +513,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('succeeds for two orders (taking the first order)', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -531,12 +531,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         const startingBalances = await getBalances(
           order1,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount,
@@ -548,7 +548,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order1,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
       });
     });
@@ -557,7 +557,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('succeeds for two orders (taking both orders)', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -577,12 +577,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         const startingBalances = await getBalances(
           order1,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount,
@@ -594,7 +594,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order1,
           exchangeWrapper,
           amount,
-          dydxProxy
+          detaProxy
         );
       });
     });
@@ -603,7 +603,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('succeeds for multiple orders of varying state', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -625,7 +625,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await grantTokens(order1, exchangeWrapper, amount1);
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount1,
@@ -638,12 +638,12 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         const startingBalances = await getBalances(
           order1,
           exchangeWrapper,
-          dydxProxy
+          detaProxy
         );
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order1.makerTokenAddress,
           order1.takerTokenAddress,
           amount2,
@@ -655,7 +655,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
           order1,
           exchangeWrapper,
           amount2,
-          dydxProxy,
+          detaProxy,
           '12818323521604691757',
         );
       });
@@ -665,7 +665,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails for max-price-too-low', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -685,7 +685,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await expectThrow(
           exchangeWrapper.exchange(
             tradeOriginator,
-            dydxProxy,
+            detaProxy,
             order1.makerTokenAddress,
             order1.takerTokenAddress,
             amount,
@@ -699,7 +699,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails for zero orders', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -712,7 +712,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await expectThrow(
           exchangeWrapper.exchange(
             tradeOriginator,
-            dydxProxy,
+            detaProxy,
             order.makerTokenAddress,
             order.takerTokenAddress,
             amount,
@@ -726,7 +726,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails for price > 128 bits', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -745,7 +745,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await expectThrow(
           exchangeWrapper.exchange(
             tradeOriginator,
-            dydxProxy,
+            detaProxy,
             order.makerTokenAddress,
             order.takerTokenAddress,
             amount,
@@ -756,7 +756,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
         await expectThrow(
           exchangeWrapper.exchange(
             tradeOriginator,
-            dydxProxy,
+            detaProxy,
             order.makerTokenAddress,
             order.takerTokenAddress,
             amount,
@@ -770,7 +770,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails if the exchangeWrapper is not given enough tokens', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -782,7 +782,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await expectThrow(exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -795,7 +795,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails if makerToken returned is zero', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -809,7 +809,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await expectThrow(exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -822,7 +822,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails if order is too small', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -834,7 +834,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await expectThrow(exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -847,7 +847,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
       it('fails if order has already been filled', async () => {
         const {
           exchangeWrapper,
-          dydxProxy,
+          detaProxy,
           tradeOriginator,
         } = await setup(accounts);
 
@@ -859,7 +859,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -870,7 +870,7 @@ describe('ZeroExV2MultiOrderExchangeWrapper', () => {
 
         await expectThrow(exchangeWrapper.exchange(
           tradeOriginator,
-          dydxProxy,
+          detaProxy,
           order.makerTokenAddress,
           order.takerTokenAddress,
           amount,
@@ -891,7 +891,7 @@ function priceToBytes(num, den) {
 }
 
 async function setup(accounts) {
-  const dydxProxy = accounts[3];
+  const detaProxy = accounts[3];
   const tradeOriginator = accounts[2];
   const makerAddress = accounts[5];
   const makerToken = await OwedToken.deployed();
@@ -908,7 +908,7 @@ async function setup(accounts) {
   );
 
   return {
-    dydxProxy,
+    detaProxy,
     tradeOriginator,
     exchangeWrapper,
   };
@@ -934,7 +934,7 @@ async function grantTokens(order, exchangeWrapper, amount) {
   ]);
 }
 
-async function getBalances(order, exchangeWrapper, dydxProxy) {
+async function getBalances(order, exchangeWrapper, detaProxy) {
   const [makerToken, takerToken] = await Promise.all([
     TestToken.at(order.makerTokenAddress),
     TestToken.at(order.takerTokenAddress),
@@ -951,7 +951,7 @@ async function getBalances(order, exchangeWrapper, dydxProxy) {
     takerToken.balanceOf.call(order.makerAddress),
     makerToken.balanceOf.call(exchangeWrapper.address),
     takerToken.balanceOf.call(exchangeWrapper.address),
-    makerToken.allowance.call(exchangeWrapper.address, dydxProxy)
+    makerToken.allowance.call(exchangeWrapper.address, detaProxy)
   ]);
 
   return {
@@ -968,7 +968,7 @@ async function validateBalances(
   order,
   exchangeWrapper,
   amount,
-  dydxProxy,
+  detaProxy,
   tradedMakerTokenOverride = null,
 ) {
   const {
@@ -977,7 +977,7 @@ async function validateBalances(
     exchangeWrapperMakerToken,
     exchangeWrapperTakerToken,
     exchangeWrapperProxyAllowance
-  } = await getBalances(order, exchangeWrapper, dydxProxy);
+  } = await getBalances(order, exchangeWrapper, detaProxy);
 
   const tradedMakerToken = tradedMakerTokenOverride
     ? new BigNumber(tradedMakerTokenOverride)

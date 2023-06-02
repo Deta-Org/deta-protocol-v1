@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import { MarginHelper } from "./lib/MarginHelper.sol";
 
 /**
  * @title SharedLoan
- * @author dYdX
+ * @author deta
  *
  * This contract is used to share loan positions. Multiple participants can share in a loan
  * position, and will all be paid out proportional to ownership when the loan is repaid. Ownership
@@ -183,7 +183,7 @@ contract SharedLoan is
         onlyPosition(positionId)
         returns (address)
     {
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, POSITION_ID);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, POSITION_ID);
         assert(position.principal > 0);
 
         // set relevant constants
@@ -381,7 +381,7 @@ contract SharedLoan is
         private
     {
         if (state != State.CLOSED) {
-            if (Margin(DYDX_MARGIN).isPositionClosed(POSITION_ID)) {
+            if (Margin(deta_MARGIN).isPositionClosed(POSITION_ID)) {
                 state = State.CLOSED;
             }
         }

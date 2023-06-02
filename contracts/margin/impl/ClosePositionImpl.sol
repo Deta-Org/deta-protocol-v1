@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import { ExchangeWrapper } from "../interfaces/ExchangeWrapper.sol";
 
 /**
  * @title ClosePositionImpl
- * @author dYdX
+ * @author deta
  *
  * This library contains the implementation for the closePosition function of Margin
  */

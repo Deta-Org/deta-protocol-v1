@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ pragma experimental "v0.5.0";
 
 /**
  * @title ForceRecoverCollateralDelegator
- * @author dYdX
+ * @author deta
  *
  * Interface that smart contracts must implement in order to let other addresses
  * forceRecoverCollateral() a loan owned by the smart contract.

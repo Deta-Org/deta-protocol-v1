@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -29,9 +29,9 @@ import { ExchangeWrapper } from "../../interfaces/ExchangeWrapper.sol";
 
 /**
  * @title ZeroExV1ExchangeWrapper
- * @author dYdX
+ * @author deta
  *
- * dYdX ExchangeWrapper to interface with 0x Version 1
+ * deta ExchangeWrapper to interface with 0x Version 1
  */
 contract ZeroExV1ExchangeWrapper is
     ExchangeWrapper,

@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import { MarginHelper } from "../lib/MarginHelper.sol";
 
 /**
  * @title ERC20Position
- * @author dYdX
+ * @author deta
  *
  * Shared code for ERC20Short and ERC20Long
  */
@@ -190,7 +190,7 @@ contract ERC20Position is
         onlyPosition(positionId)
         returns (address)
     {
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, POSITION_ID);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, POSITION_ID);
         assert(position.principal > 0);
 
         // set relevant constants
@@ -228,7 +228,7 @@ contract ERC20Position is
         returns (address)
     {
         require(
-            !Margin(DYDX_MARGIN).isPositionCalled(POSITION_ID),
+            !Margin(deta_MARGIN).isPositionCalled(POSITION_ID),
             "ERC20Position#increasePositionOnBehalfOf: Position is margin-called"
         );
         require(
@@ -268,7 +268,7 @@ contract ERC20Position is
         onlyPosition(positionId)
         returns (address, uint256)
     {
-        uint256 positionPrincipal = Margin(DYDX_MARGIN).getPositionPrincipal(positionId);
+        uint256 positionPrincipal = Margin(deta_MARGIN).getPositionPrincipal(positionId);
 
         assert(requestedAmount <= positionPrincipal);
 
@@ -457,7 +457,7 @@ contract ERC20Position is
         private
     {
         // If in OPEN state, but the position is closed, set to CLOSED state
-        if (state == State.OPEN && Margin(DYDX_MARGIN).isPositionClosed(POSITION_ID)) {
+        if (state == State.OPEN && Margin(deta_MARGIN).isPositionClosed(POSITION_ID)) {
             state = State.CLOSED;
             emit CompletelyClosed();
         }

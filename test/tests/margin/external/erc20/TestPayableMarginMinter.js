@@ -28,7 +28,7 @@ const {
 } = require('../../../../helpers/MarginHelper');
 
 
-let Seo, Weth, Dai, dydxMargin;
+let Seo, Weth, Dai, detaMargin;
 let positionId, tokenContract, sharedLoanContract;
 let salt = DEFAULT_SALT + 1;
 
@@ -36,7 +36,7 @@ contract('#PayableMarginMinter', accounts => {
   const opener = accounts[0];
 
   before('set up contracts', async () => {
-    [dydxMargin, Weth, Dai] = await Promise.all([
+    [detaMargin, Weth, Dai] = await Promise.all([
       Margin.deployed(),
       WETH9.new(),
       HeldToken.new()
@@ -50,7 +50,7 @@ contract('#PayableMarginMinter', accounts => {
   beforeEach('open position', async () => {
     const nonce = salt++;
     positionId = web3Instance.utils.soliditySha3(opener, nonce);
-    await dydxMargin.openWithoutCounterparty(
+    await detaMargin.openWithoutCounterparty(
       [
         ERC20ShortFactory.address,
         Weth.address,
@@ -70,9 +70,9 @@ contract('#PayableMarginMinter', accounts => {
       ],
       { from: opener }
     );
-    tokenContract = await dydxMargin.getPositionOwner.call(positionId);
+    tokenContract = await detaMargin.getPositionOwner.call(positionId);
     tokenContract = await ERC20Short.at(tokenContract);
-    sharedLoanContract = await dydxMargin.getPositionLender.call(positionId);
+    sharedLoanContract = await detaMargin.getPositionLender.call(positionId);
     sharedLoanContract = await SharedLoan.at(sharedLoanContract);
   });
 

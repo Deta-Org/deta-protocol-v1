@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import { PositionCustodian } from "../interfaces/PositionCustodian.sol";
 
 /**
  * @title ERC721MarginPosition
- * @author dYdX
+ * @author deta
  *
  * Contract used to tokenize positions as ERC721-compliant non-fungible tokens. Holding the
  * token allows the holder to close the position. Functionality is added to let users approve
@@ -103,7 +103,7 @@ contract ERC721MarginPosition is
         address margin
     )
         public
-        ERC721Token("dYdX ERC721 Margin Positions", "d/PO")
+        ERC721Token("deta ERC721 Margin Positions", "d/PO")
         OnlyMargin(margin)
     {}
 
@@ -138,7 +138,7 @@ contract ERC721MarginPosition is
      * Approve any close with the specified recipient as the payoutRecipient of the close.
      *
      * NOTE: An account approving itself as a recipient is often a very bad idea. A smart contract
-     * that approves itself should implement the PayoutRecipient interface for dYdX to verify that
+     * that approves itself should implement the PayoutRecipient interface for deta to verify that
      * it is given a fair payout for an external account closing the position.
      *
      * @param  recipient   Address of the recipient
@@ -178,7 +178,7 @@ contract ERC721MarginPosition is
         );
 
         _burn(owner, tokenId);
-        Margin(DYDX_MARGIN).transferPosition(positionId, to);
+        Margin(deta_MARGIN).transferPosition(positionId, to);
 
         emit PositionUntokenized(positionId, owner, to);
     }
@@ -338,7 +338,7 @@ contract ERC721MarginPosition is
         private
     {
         require(
-            Margin(DYDX_MARGIN).isPositionClosed(positionId),
+            Margin(deta_MARGIN).isPositionClosed(positionId),
             "ERC721MarginPosition#burnClosedTokenInternal: Position is not closed"
         );
         _burn(ownerOfPosition(positionId), uint256(positionId));

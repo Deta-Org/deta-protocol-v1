@@ -12,7 +12,7 @@ const {
 } = require('../../helpers/MarginHelper');
 
 contract('LoanGetters', (accounts) => {
-  let dydxMargin;
+  let detaMargin;
 
   async function expectLoanAmounts(loanHash, expectedFilledAmount, expectedCanceledAmount){
     const [
@@ -20,9 +20,9 @@ contract('LoanGetters', (accounts) => {
       filledAmount,
       canceledAmount
     ] = await Promise.all([
-      dydxMargin.getLoanUnavailableAmount.call(loanHash),
-      dydxMargin.getLoanFilledAmount.call(loanHash),
-      dydxMargin.getLoanCanceledAmount.call(loanHash)
+      detaMargin.getLoanUnavailableAmount.call(loanHash),
+      detaMargin.getLoanFilledAmount.call(loanHash),
+      detaMargin.getLoanCanceledAmount.call(loanHash)
     ]);
 
     expect(unavailableAmount).to.be.bignumber.equal(filledAmount.plus(canceledAmount));
@@ -31,7 +31,7 @@ contract('LoanGetters', (accounts) => {
   }
 
   before('get Margin', async () => {
-    dydxMargin = await Margin.deployed();
+    detaMargin = await Margin.deployed();
   });
 
   describe('#getLoanUnavailableAmount, getLoanFilledAmount, #getLoanCanceledAmount', () => {
@@ -43,19 +43,19 @@ contract('LoanGetters', (accounts) => {
 
       await expectLoanAmounts(openTx.loanOffering.loanHash, 0, 0);
 
-      await callCancelLoanOffer(dydxMargin, openTx.loanOffering, ca1);
+      await callCancelLoanOffer(detaMargin, openTx.loanOffering, ca1);
       await expectLoanAmounts(openTx.loanOffering.loanHash, 0, ca1);
 
       await issueTokensAndSetAllowances(openTx);
-      await callOpenPosition(dydxMargin, openTx);
+      await callOpenPosition(detaMargin, openTx);
       await expectLoanAmounts(openTx.loanOffering.loanHash, openTx.principal, ca1);
 
-      await callCancelLoanOffer(dydxMargin, openTx.loanOffering, ca2);
+      await callCancelLoanOffer(detaMargin, openTx.loanOffering, ca2);
       await expectLoanAmounts(openTx.loanOffering.loanHash, openTx.principal, ca1.plus(ca2));
 
       await issueTokensAndSetAllowances(openTx);
       openTx.nonce = 2;
-      await callOpenPosition(dydxMargin, openTx);
+      await callOpenPosition(detaMargin, openTx);
       await expectLoanAmounts(
         openTx.loanOffering.loanHash,
         openTx.principal.times(2),

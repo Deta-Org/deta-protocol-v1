@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import { StringHelpers } from "../../../lib/StringHelpers.sol";
 
 /**
  * @title ERC20Short
- * @author dYdX
+ * @author deta
  *
  * Contract used to tokenize short positions and allow them to be used as ERC20-compliant
  * tokens. Holding the tokens allows the holder to close a piece of the short position, or be
@@ -62,7 +62,7 @@ contract ERC20Short is ERC20Position {
         view
         returns (uint8)
     {
-        address owedToken = Margin(DYDX_MARGIN).getPositionOwedToken(POSITION_ID);
+        address owedToken = Margin(deta_MARGIN).getPositionOwedToken(POSITION_ID);
         return DetailedERC20(owedToken).decimals();
     }
 
@@ -74,7 +74,7 @@ contract ERC20Short is ERC20Position {
         if (state == State.UNINITIALIZED) {
             return "s[UNINITIALIZED]";
         }
-        address owedToken = Margin(DYDX_MARGIN).getPositionOwedToken(POSITION_ID);
+        address owedToken = Margin(deta_MARGIN).getPositionOwedToken(POSITION_ID);
         return string(
             abi.encodePacked(
                 "s",
@@ -89,11 +89,11 @@ contract ERC20Short is ERC20Position {
         returns (string)
     {
         if (state == State.UNINITIALIZED) {
-            return "dYdX Short Token [UNINITIALIZED]";
+            return "deta Short Token [UNINITIALIZED]";
         }
         return string(
             abi.encodePacked(
-                "dYdX Short Token ",
+                "deta Short Token ",
                 StringHelpers.bytes32ToHex(POSITION_ID)
             )
         );

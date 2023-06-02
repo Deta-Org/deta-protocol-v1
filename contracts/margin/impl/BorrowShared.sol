@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import { LoanOfferingVerifier } from "../interfaces/LoanOfferingVerifier.sol";
 
 /**
  * @title BorrowShared
- * @author dYdX
+ * @author deta
  *
  * This library contains shared functionality between OpenPositionImpl and IncreasePositionImpl.
  * Both use a Loan Offering and a DEX Order to open or increase a position.

@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ pragma experimental "v0.5.0";
 
 /**
  * @title GeneralERC20
- * @author dYdX
+ * @author deta
  *
  * Interface for using ERC20 Tokens. We have to use a special interface to call ERC20 functions so
  * that we dont automatically revert when calling non-compliant tokens that have no return value for

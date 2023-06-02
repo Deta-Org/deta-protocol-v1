@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import { Ownable } from "openzeppelin-solidity/contracts/ownership/Ownable.sol";
 
 /**
  * @title MarginAdmin
- * @author dYdX
+ * @author deta
  *
  * Contains admin functions for the Margin contract
  * The owner can put Margin into various close-only modes, which will disallow new position creation

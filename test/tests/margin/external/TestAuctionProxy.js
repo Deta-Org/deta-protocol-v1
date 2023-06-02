@@ -26,7 +26,7 @@ const { wait } = require('@digix/tempo')(web3);
 
 contract('AuctionProxy', accounts => {
   let owedToken;
-  let dydxMargin;
+  let detaMargin;
   let dutchAuction;
   let auctionProxy;
 
@@ -35,31 +35,31 @@ contract('AuctionProxy', accounts => {
   before('retrieve deployed contracts', async () => {
     [
       owedToken,
-      dydxMargin,
+      detaMargin,
       dutchAuction,
     ] = await Promise.all([
       OwedToken.deployed(),
       Margin.deployed(),
       DutchAuctionCloser.deployed(),
     ]);
-    auctionProxy = await AuctionProxy.new(dydxMargin.address);
+    auctionProxy = await AuctionProxy.new(detaMargin.address);
     const tx = await doOpenPosition(accounts);
     positionId = tx.id;
 
     // tokenify position
     const tokenContract = await ERC20Short.new(
       positionId,
-      dydxMargin.address,
+      detaMargin.address,
       accounts[2],
       [dutchAuction.address],
       [accounts[0]]
     );
-    await dydxMargin.transferPosition(
+    await detaMargin.transferPosition(
       positionId,
       tokenContract.address,
       { from: tx.trader }
     );
-    await dydxMargin.marginCall(positionId, 0, { from: tx.loanOffering.owner });
+    await detaMargin.marginCall(positionId, 0, { from: tx.loanOffering.owner });
     await wait(tx.loanOffering.callTimeLimit * 99 / 100);
   });
 
@@ -67,7 +67,7 @@ contract('AuctionProxy', accounts => {
     it('sets constants correctly', async () => {
       const expectedAddress = ADDRESSES.TEST[0];
       const contract = await AuctionProxy.new(expectedAddress);
-      const marginAddress = await contract.DYDX_MARGIN.call();
+      const marginAddress = await contract.deta_MARGIN.call();
       expect(marginAddress).to.eq(expectedAddress);
     });
   });
@@ -77,7 +77,7 @@ contract('AuctionProxy', accounts => {
       const order = await createOrder();
 
       // close it once normally using the dutchAuction
-      await dydxMargin.closePosition(
+      await detaMargin.closePosition(
         positionId,
         order.makerTokenAmount.div(2),
         dutchAuction.address,

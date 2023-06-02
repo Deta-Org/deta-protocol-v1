@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ import { Vault } from "../Vault.sol";
 
 /**
  * @title PositionGetters
- * @author dYdX
+ * @author deta
  *
  * A collection of public constant getter functions that allows reading of the state of any position
- * stored in the dYdX protocol.
+ * stored in the deta protocol.
  */
 contract PositionGetters is MarginStorage {
     using SafeMath for uint256;

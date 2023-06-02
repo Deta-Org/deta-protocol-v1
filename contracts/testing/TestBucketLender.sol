@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ contract TestBucketLender is BucketLender {
 
         require(TokenInteract.balanceOf(OWED_TOKEN, address(this)) >= availableTotal);
         if (principalTotal > 0) {
-            require(Margin(DYDX_MARGIN).getPositionPrincipal(POSITION_ID) <= principalTotal);
+            require(Margin(deta_MARGIN).getPositionPrincipal(POSITION_ID) <= principalTotal);
         }
         require(principalSum == principalTotal);
         require(availableSum == availableTotal);

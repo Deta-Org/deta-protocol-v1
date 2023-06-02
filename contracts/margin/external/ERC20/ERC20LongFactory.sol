@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import { ERC20PositionFactory } from "./ERC20PositionFactory.sol";
 
 /**
  * @title ERC20LongFactory
- * @author dYdX
+ * @author deta
  *
  * This contract is used to deploy new ERC20Long contracts. A new ERC20Long is
  * automatically deployed whenever a position is transferred to this contract. Ownership of that
@@ -58,7 +58,7 @@ contract ERC20LongFactory is ERC20PositionFactory {
     {
         return new ERC20Long(
             positionId,
-            DYDX_MARGIN,
+            deta_MARGIN,
             creator,
             TRUSTED_RECIPIENTS,
             TRUSTED_WITHDRAWERS

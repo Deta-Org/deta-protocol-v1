@@ -310,7 +310,7 @@ contract('BucketLender', accounts => {
         bucketLenderOwedToken,
         bucketLenderHeldToken,
       ] = await Promise.all([
-        bucketLender.DYDX_MARGIN.call(),
+        bucketLender.deta_MARGIN.call(),
         bucketLender.OWED_TOKEN.call(),
         bucketLender.HELD_TOKEN.call(),
         bucketLender.BUCKET_TIME.call(),

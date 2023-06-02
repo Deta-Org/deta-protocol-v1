@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,10 +25,10 @@ import { MarginStorage } from "./MarginStorage.sol";
 
 /**
  * @title LoanGetters
- * @author dYdX
+ * @author deta
  *
  * A collection of public constant getter functions that allows reading of the state of any loan
- * offering stored in the dYdX protocol.
+ * offering stored in the deta protocol.
  */
 contract LoanGetters is MarginStorage {
 

@@ -86,16 +86,16 @@ describe('#deposit', () => {
       const rando = accounts[8];
       const depositAmount = new BigNumber('1e18');
 
-      const dydxMargin = await Margin.deployed();
+      const detaMargin = await Margin.deployed();
       const heldToken = await HeldToken.deployed();
 
       // set up position
       const delegatorContract = await TestDepositCollateralDelegator.new(
-        dydxMargin.address,
+        detaMargin.address,
         depositor
       );
       const openTx = await doOpenPosition(accounts);
-      await dydxMargin.transferPosition(
+      await detaMargin.transferPosition(
         openTx.id,
         delegatorContract.address,
         { from: openTx.owner }
@@ -104,34 +104,34 @@ describe('#deposit', () => {
       // fails for non-approved depositor
       await issueTokenToAccountInAmountAndApproveProxy(heldToken, rando, depositAmount);
       await expectThrow(
-        dydxMargin.depositCollateral(
+        detaMargin.depositCollateral(
           openTx.id,
           depositAmount,
           { from: rando }
         )
       );
 
-      const balance1 = await dydxMargin.getPositionBalance.call(openTx.id);
+      const balance1 = await detaMargin.getPositionBalance.call(openTx.id);
 
       // succeeds for approved depositor
       await issueTokenToAccountInAmountAndApproveProxy(heldToken, depositor, depositAmount);
-      await dydxMargin.depositCollateral(
+      await detaMargin.depositCollateral(
         openTx.id,
         depositAmount,
         { from: depositor }
       );
 
-      const balance2 = await dydxMargin.getPositionBalance.call(openTx.id);
+      const balance2 = await detaMargin.getPositionBalance.call(openTx.id);
       expect(balance2.minus(balance1)).to.be.bignumber.equal(depositAmount);
     });
   });
 
   contract('Margin', accounts => {
     it('allows deposit in increments', async () => {
-      const dydxMargin = await Margin.deployed();
+      const detaMargin = await Margin.deployed();
       const { openTx } = await doOpenPositionAndCall(accounts);
 
-      let { requiredDeposit } = await getPosition(dydxMargin, openTx.id);
+      let { requiredDeposit } = await getPosition(detaMargin, openTx.id);
 
       await doDepositCollateral({
         from: openTx.trader,
@@ -139,7 +139,7 @@ describe('#deposit', () => {
         amount: requiredDeposit.minus(5)
       });
 
-      let position = await getPosition(dydxMargin, openTx.id);
+      let position = await getPosition(detaMargin, openTx.id);
       requiredDeposit = position.requiredDeposit;
       let callTimestamp = position.callTimestamp;
       expect(requiredDeposit).to.be.bignumber.eq(5);
@@ -159,7 +159,7 @@ describe('#deposit', () => {
         depositAmount: amount2
       });
 
-      position = await getPosition(dydxMargin, openTx.id);
+      position = await getPosition(detaMargin, openTx.id);
       requiredDeposit = position.requiredDeposit;
       callTimestamp = position.callTimestamp;
       expect(requiredDeposit).to.be.bignumber.eq(0);
@@ -174,12 +174,12 @@ async function doDepositCollateral({
   printGas = false,
   amount = new BigNumber(1000)
 }) {
-  const [dydxMargin, heldToken] = await Promise.all([
+  const [detaMargin, heldToken] = await Promise.all([
     Margin.deployed(),
     HeldToken.deployed()
   ]);
 
-  const initialBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+  const initialBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
   await issueAndSetAllowance(
     heldToken,
@@ -188,7 +188,7 @@ async function doDepositCollateral({
     TokenProxy.address
   );
 
-  const tx = await dydxMargin.depositCollateral(
+  const tx = await detaMargin.depositCollateral(
     openTx.id,
     amount,
     { from }
@@ -198,7 +198,7 @@ async function doDepositCollateral({
     console.log('\tMargin.depositCollateral gas used: ' + tx.receipt.gasUsed);
   }
 
-  const newBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+  const newBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
   expect(newBalance).to.be.bignumber.equal(initialBalance.plus(amount));
 

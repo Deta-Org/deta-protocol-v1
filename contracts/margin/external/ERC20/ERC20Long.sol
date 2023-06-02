@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import { StringHelpers } from "../../../lib/StringHelpers.sol";
 
 /**
  * @title ERC20Long
- * @author dYdX
+ * @author deta
  *
  * Contract used to tokenize leveraged long positions and allow them to be used as ERC20-compliant
  * tokens. Holding the tokens allows the holder to close a piece of the position, or be
@@ -87,11 +87,11 @@ contract ERC20Long is ERC20Position {
         returns (string)
     {
         if (state == State.UNINITIALIZED) {
-            return "dYdX Leveraged Long Token [UNINITIALIZED]";
+            return "deta Leveraged Long Token [UNINITIALIZED]";
         }
         return string(
             abi.encodePacked(
-                "dYdX Leveraged Long Token ",
+                "deta Leveraged Long Token ",
                 StringHelpers.bytes32ToHex(POSITION_ID)
             )
         );
@@ -109,7 +109,7 @@ contract ERC20Long is ERC20Position {
         // total supply should always equal position balance, except after closing with trusted
         // recipient, in which case this function cannot be called.
 
-        uint256 positionBalance = Margin(DYDX_MARGIN).getPositionBalance(POSITION_ID);
+        uint256 positionBalance = Margin(deta_MARGIN).getPositionBalance(POSITION_ID);
         return positionBalance.sub(totalSupply_);
     }
 
@@ -125,7 +125,7 @@ contract ERC20Long is ERC20Position {
             uint256 /* allowedCloseAmount */
         )
     {
-        uint256 positionBalance = Margin(DYDX_MARGIN).getPositionBalance(POSITION_ID);
+        uint256 positionBalance = Margin(deta_MARGIN).getPositionBalance(POSITION_ID);
 
         uint256 requestedTokenAmount = MathHelpers.getPartialAmount(
             requestedCloseAmount,

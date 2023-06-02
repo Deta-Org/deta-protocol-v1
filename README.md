@@ -1,33 +1,33 @@
-<p align="center"><img src="https://s3.amazonaws.com/dydx-assets/logo_large_white.png" width="256" /></p>
+<p align="center"><img src="https://s3.amazonaws.com/deta-assets/logo_large_white.png" width="256" /></p>
 
 <p align="center">
-  <a href="https://circleci.com/gh/dydxprotocol/workflows/protocol_v1/tree/master">
-    <img src="https://img.shields.io/circleci/project/github/dydxprotocol/protocol_v1.svg" alt='CI' />
+  <a href="https://circleci.com/gh/detaprotocol/workflows/protocol_v1/tree/master">
+    <img src="https://img.shields.io/circleci/project/github/detaprotocol/protocol_v1.svg" alt='CI' />
   </a>
-  <a href='https://coveralls.io/github/dydxprotocol/protocol'>
-    <img src='https://coveralls.io/repos/github/dydxprotocol/protocol/badge.svg?branch=master' alt='Coverage Status' />
+  <a href='https://coveralls.io/github/detaprotocol/protocol'>
+    <img src='https://coveralls.io/repos/github/detaprotocol/protocol/badge.svg?branch=master' alt='Coverage Status' />
   </a>
-  <a href='https://github.com/dydxprotocol/protocol/blob/master/LICENSE'>
-    <img src='https://img.shields.io/github/license/dydxprotocol/protocol.svg?longCache=true' alt='License' />
+  <a href='https://github.com/detaprotocol/protocol/blob/master/LICENSE'>
+    <img src='https://img.shields.io/github/license/detaprotocol/protocol.svg?longCache=true' alt='License' />
   </a>
-  <a href='https://www.npmjs.com/package/@dydxprotocol/protocol'>
-    <img src='https://img.shields.io/npm/v/@dydxprotocol/protocol.svg' alt='NPM' />
+  <a href='https://www.npmjs.com/package/@detaprotocol/protocol'>
+    <img src='https://img.shields.io/npm/v/@detaprotocol/protocol.svg' alt='NPM' />
   </a>
-  <a href='https://store.docker.com/community/images/dydxprotocol/protocol/tags'>
+  <a href='https://store.docker.com/community/images/detaprotocol/protocol/tags'>
     <img src='https://img.shields.io/badge/docker-container-blue.svg?logo=docker&longCache=true' alt='Docker' />
   </a>
-  <a href='https://slack.dydx.exchange/'>
+  <a href='https://slack.deta.exchange/'>
     <img src='https://img.shields.io/badge/chat-on%20slack-brightgreen.svg?longCache=true' alt='Slack' />
   </a>
 </p>
 
-**DEPRECATED see our new protocol [here](https://github.com/dydxprotocol/solo)**
+**DEPRECATED see our new protocol [here](https://github.com/detaprotocol/solo)**
 
-Source code for Ethereum Smart Contracts used by the dYdX Margin Trading Protocol
+Source code for Ethereum Smart Contracts used by the deta Margin Trading Protocol
 
-[Whitepaper](https://whitepaper.dydx.exchange)
+[Whitepaper](https://whitepaper.deta.exchange)
 
-[Short & Leveraged Long Tokens Whitepaper](https://margintokens.dydx.exchange)
+[Short & Leveraged Long Tokens Whitepaper](https://margintokens.deta.exchange)
 
 ## Npm Package
 
@@ -36,13 +36,13 @@ The npm package contains the deployed addresses of the contracts, and also allow
 #### Install
 
 ```
-npm install --save @dydxprotocol/protocol
+npm install --save @detaprotocol/protocol
 ```
 
 #### Contracts
 
 ```javascript
-import { Margin as MarginContract } from '@dydxprotocol/protocol';
+import { Margin as MarginContract } from '@detaprotocol/protocol';
 import truffleContract from 'truffle-contract';
 
 async function openPosition(provider, networkId) {
@@ -62,7 +62,7 @@ async function openPosition(provider, networkId) {
 Seed positions are available and already deployed on the docker container
 
 ```javascript
-import { seeds } from '@dydxprotocol/protocol';
+import { seeds } from '@detaprotocol/protocol';
 
 const position = seeds.positions[2];
 
@@ -80,18 +80,18 @@ console.log(order.maker);
 When using the docker container, you can reset the evm to the default state. This can be useful when running automated test suites
 
 ```javascript
-import { resetEVM } from '@dydxprotocol/protocol';
+import { resetEVM } from '@detaprotocol/protocol';
 
 await resetEVM(web3.currentProvider);
 ```
 
 ## Docker Container
 
-[Docker container](https://store.docker.com/community/images/dydxprotocol/protocol/tags) with a a deployed version of the protocol running on a ganache-cli node with network_id = 1212. Docker container versions correspond to npm versions of this package, so use the same version for both
+[Docker container](https://store.docker.com/community/images/detaprotocol/protocol/tags) with a a deployed version of the protocol running on a ganache-cli node with network_id = 1212. Docker container versions correspond to npm versions of this package, so use the same version for both
 
 ```
-docker pull dydxprotocol/protocol
-docker run dydxprotocol/protocol
+docker pull detaprotocol/protocol
+docker run detaprotocol/protocol
 ```
 
 #### Docker Compose
@@ -102,7 +102,7 @@ docker run dydxprotocol/protocol
 version: '3'
 services:
   protocol:
-    image: dydxprotocol/protocol:latest
+    image: detaprotocol/protocol:latest
     ports:
       - 8545:8545
 ```
@@ -140,9 +140,9 @@ Lint the solidity files (all smart contracts)
 npm run solint
 ```
 
-Lint the solidity files (custom dYdX linter)
+Lint the solidity files (custom deta linter)
 ```
-npm run dydxlint
+npm run detalint
 ```
 
 ## Architecture

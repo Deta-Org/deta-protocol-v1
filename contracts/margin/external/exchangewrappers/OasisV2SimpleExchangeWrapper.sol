@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@ import { ExchangeWrapper } from "../../interfaces/ExchangeWrapper.sol";
 
 /**
  * @title OasisV2SimpleExchangeWrapper
- * @author dYdX
+ * @author deta
  *
- * dYdX ExchangeWrapper to interface with Maker's (Oasis exchange) SimpleMarket or MatchingMarket
+ * deta ExchangeWrapper to interface with Maker's (Oasis exchange) SimpleMarket or MatchingMarket
  * contracts to trade using a specific offer. Since any MatchingMarket is also a SimpleMarket, this
  * ExchangeWrapper can also be used for any MatchingMarket.
  */

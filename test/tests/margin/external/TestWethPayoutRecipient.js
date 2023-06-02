@@ -20,7 +20,7 @@ const { signOrder } = require('../../../helpers/ZeroExV1Helper');
 const { zeroExV1OrderToBytes } = require('../../../helpers/BytesHelper');
 
 contract('DutchAuctionCloser', accounts => {
-  let dydxMargin, tokenProxy, weth, heldToken;
+  let detaMargin, tokenProxy, weth, heldToken;
   const opener = accounts[9];
   const loanHolder = accounts[8];
   const OgAmount = new BigNumber('1e9');
@@ -29,7 +29,7 @@ contract('DutchAuctionCloser', accounts => {
   before('retrieve deployed contracts, set up two large positions', async () => {
     // retrieve deployed contracts
     [
-      dydxMargin,
+      detaMargin,
       tokenProxy,
       weth,
       heldToken,
@@ -51,7 +51,7 @@ contract('DutchAuctionCloser', accounts => {
     positionId1 = web3Instance.utils.soliditySha3(opener, 1);
     positionId2 = web3Instance.utils.soliditySha3(opener, 2);
     await Promise.all([
-      dydxMargin.openWithoutCounterparty(
+      detaMargin.openWithoutCounterparty(
         [
           opener,
           heldToken.address, // owedToken
@@ -62,7 +62,7 @@ contract('DutchAuctionCloser', accounts => {
         [1, 1, 0, 1],
         { from: opener }
       ),
-      dydxMargin.openWithoutCounterparty(
+      detaMargin.openWithoutCounterparty(
         [
           opener,
           weth.address, // owedToken
@@ -88,7 +88,7 @@ contract('DutchAuctionCloser', accounts => {
     const closeAmount = OgAmount.div(10);
 
     it('succeeds for weth heldToken', async () => {
-      await dydxMargin.closePositionDirectly(
+      await detaMargin.closePositionDirectly(
         positionId1,
         closeAmount,
         WethPayoutRecipient.address,
@@ -123,7 +123,7 @@ contract('DutchAuctionCloser', accounts => {
       };
       order.ecSignature = await signOrder(order);
       // close the position
-      await dydxMargin.closePosition(
+      await detaMargin.closePosition(
         positionId2,
         closeAmount,
         WethPayoutRecipient.address,
@@ -136,7 +136,7 @@ contract('DutchAuctionCloser', accounts => {
 
     it('fails if payout is not in weth', async () => {
       await expectThrow(
-        dydxMargin.closePositionDirectly(
+        detaMargin.closePositionDirectly(
           positionId2,
           closeAmount,
           WethPayoutRecipient.address,

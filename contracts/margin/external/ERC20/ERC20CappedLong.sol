@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import { ERC20Long } from "./ERC20Long.sol";
 
 /**
  * @title ERC20CappedLong
- * @author dYdX
+ * @author deta
  *
  * ERC20Long with a limit on the number of tokens that can be minted, and a restriction on
  * which addreses can close the position after it is force-recoverable.

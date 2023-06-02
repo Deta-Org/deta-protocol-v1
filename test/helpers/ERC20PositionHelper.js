@@ -36,7 +36,7 @@ async function createMarginToken(
 ) {
   trader = trader || accounts[8];
 
-  const [openTx, dydxMargin] = await Promise.all([
+  const [openTx, detaMargin] = await Promise.all([
     createOpenTx(
       accounts,
       {
@@ -77,7 +77,7 @@ async function createMarginToken(
     }
   );
   // openPositionWithoutCounterparty
-  await dydxMargin.openWithoutCounterparty(
+  await detaMargin.openWithoutCounterparty(
     [
       marginToken.address,
       OwedToken.address,

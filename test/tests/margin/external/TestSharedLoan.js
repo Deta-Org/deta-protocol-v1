@@ -25,7 +25,7 @@ contract('SharedLoan', accounts => {
 
   // ============ Constants ============
 
-  let dydxMargin;
+  let detaMargin;
   let owedToken, heldToken;
   let salt = 987654;
   let SHARED_LOAN = {
@@ -52,14 +52,14 @@ contract('SharedLoan', accounts => {
     SHARED_LOAN.TRUSTED_MARGIN_CALLERS = [accounts[8], ADDRESSES.TEST[2]];
     SHARED_LOAN.CONTRACT = await SharedLoan.new(
       SHARED_LOAN.ID,
-      dydxMargin.address,
+      detaMargin.address,
       SHARED_LOAN.INITIAL_LENDER,
       SHARED_LOAN.TRUSTED_MARGIN_CALLERS
     );
   }
 
   async function transferLoanToSharedLoan() {
-    await dydxMargin.transferLoan(
+    await detaMargin.transferLoan(
       SHARED_LOAN.ID,
       SHARED_LOAN.CONTRACT.address,
       { from: SHARED_LOAN.TX.loanOffering.owner }
@@ -68,12 +68,12 @@ contract('SharedLoan', accounts => {
 
   async function transferPositionToTestPositionOwner() {
     const positionOwner = await TestPositionOwner.new(
-      dydxMargin.address,
+      detaMargin.address,
       ADDRESSES.ONE,
       ADDRESSES.ONE,
       1
     );
-    await dydxMargin.transferPosition(
+    await detaMargin.transferPosition(
       SHARED_LOAN.ID,
       positionOwner.address,
       { from: SHARED_LOAN.TX.owner }
@@ -83,8 +83,8 @@ contract('SharedLoan', accounts => {
 
   async function increaseWithoutCounterparty(adder, addedPrincipal) {
     const [principal, amountHeld] = await Promise.all([
-      dydxMargin.getPositionPrincipal(SHARED_LOAN.ID),
-      dydxMargin.getPositionBalance(SHARED_LOAN.ID),
+      detaMargin.getPositionPrincipal(SHARED_LOAN.ID),
+      detaMargin.getPositionBalance(SHARED_LOAN.ID),
     ]);
     const heldTokenAmount = getPartialAmount(
       addedPrincipal,
@@ -93,7 +93,7 @@ contract('SharedLoan', accounts => {
       true
     );
     await issueTokenToAccountInAmountAndApproveProxy(heldToken, adder, heldTokenAmount);
-    await dydxMargin.increaseWithoutCounterparty(
+    await detaMargin.increaseWithoutCounterparty(
       SHARED_LOAN.ID,
       addedPrincipal,
       { from: adder }
@@ -104,7 +104,7 @@ contract('SharedLoan', accounts => {
 
   before('Set up TokenProxy, Margin accounts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       owedToken,
       heldToken
     ] = await Promise.all([
@@ -125,14 +125,14 @@ contract('SharedLoan', accounts => {
 
       const sharedLoanContract = await SharedLoan.new(
         positionId,
-        dydxMargin.address,
+        detaMargin.address,
         initialLender,
         [loanCaller1, loanCaller2]
       );
 
       const tsc = await getSharedLoanConstants(sharedLoanContract, initialLender);
 
-      expect(tsc.MarginAddress).to.equal(dydxMargin.address);
+      expect(tsc.MarginAddress).to.equal(detaMargin.address);
       expect(tsc.InitialLender).to.equal(initialLender);
       expect(tsc.PositionId).to.equal(positionId);
       expect(tsc.State).to.be.bignumber.equal(SHARED_LOAN_STATE.UNINITIALIZED);
@@ -174,11 +174,11 @@ contract('SharedLoan', accounts => {
 
       const [tsc2, position] = await Promise.all([
         getSharedLoanConstants(SHARED_LOAN.CONTRACT, SHARED_LOAN.INITIAL_LENDER),
-        getPosition(dydxMargin, SHARED_LOAN.ID)
+        getPosition(detaMargin, SHARED_LOAN.ID)
       ]);
 
       // expect certain values
-      expect(tsc2.MarginAddress).to.equal(dydxMargin.address);
+      expect(tsc2.MarginAddress).to.equal(detaMargin.address);
       expect(tsc2.InitialLender).to.equal(SHARED_LOAN.INITIAL_LENDER);
       expect(tsc2.PositionId).to.equal(SHARED_LOAN.ID);
       expect(tsc2.State).to.be.bignumber.equal(SHARED_LOAN_STATE.OPEN);
@@ -227,7 +227,7 @@ contract('SharedLoan', accounts => {
     it('fails for incorrect ID', async () => {
       SHARED_LOAN.CONTRACT = await SharedLoan.new(
         BYTES32.TEST[0], // wrong ID
-        dydxMargin.address,
+        detaMargin.address,
         SHARED_LOAN.INITIAL_LENDER,
         SHARED_LOAN.TRUSTED_MARGIN_CALLERS
       );
@@ -265,7 +265,7 @@ contract('SharedLoan', accounts => {
       const tsc2 = await getSharedLoanConstants(SHARED_LOAN.CONTRACT, adder);
 
       // check basic constants
-      expect(tsc2.MarginAddress).to.equal(dydxMargin.address);
+      expect(tsc2.MarginAddress).to.equal(detaMargin.address);
       expect(tsc2.InitialLender).to.equal(SHARED_LOAN.INITIAL_LENDER);
       expect(tsc2.PositionId).to.equal(SHARED_LOAN.ID);
       expect(tsc2.State).to.be.bignumber.equal(SHARED_LOAN_STATE.OPEN);
@@ -303,13 +303,13 @@ contract('SharedLoan', accounts => {
       await setUpPosition();
       await setUpSharedLoan();
       await transferLoanToSharedLoan();
-      const isCalled = await dydxMargin.isPositionCalled.call(SHARED_LOAN.ID);
+      const isCalled = await detaMargin.isPositionCalled.call(SHARED_LOAN.ID);
       expect(isCalled).to.be.false;
     });
 
     it('fails if not authorized', async () => {
       await expectThrow(
-        dydxMargin.marginCall(
+        detaMargin.marginCall(
           SHARED_LOAN.ID,
           BIGNUMBERS.ZERO,
           { from: SHARED_LOAN.INITIAL_LENDER }
@@ -318,12 +318,12 @@ contract('SharedLoan', accounts => {
     });
 
     it('succeeds if authorized', async () => {
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         SHARED_LOAN.ID,
         BIGNUMBERS.ZERO,
         { from: SHARED_LOAN.TRUSTED_MARGIN_CALLERS[0] }
       );
-      const isCalled = await dydxMargin.isPositionCalled.call(SHARED_LOAN.ID);
+      const isCalled = await detaMargin.isPositionCalled.call(SHARED_LOAN.ID);
       expect(isCalled).to.be.true;
     });
   });
@@ -333,20 +333,20 @@ contract('SharedLoan', accounts => {
   describe('#cancelMarginCallOnBehalfOf', () => {
     before('set up position and margin-call', async () => {
       await setUpPosition();
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         SHARED_LOAN.ID,
         BIGNUMBERS.ZERO,
         { from: SHARED_LOAN.TX.loanOffering.owner }
       );
       await setUpSharedLoan();
       await transferLoanToSharedLoan();
-      const isCalled = await dydxMargin.isPositionCalled.call(SHARED_LOAN.ID);
+      const isCalled = await detaMargin.isPositionCalled.call(SHARED_LOAN.ID);
       expect(isCalled).to.be.true;
     });
 
     it('fails if not authorized', async () => {
       await expectThrow(
-        dydxMargin.cancelMarginCall(
+        detaMargin.cancelMarginCall(
           SHARED_LOAN.ID,
           { from: SHARED_LOAN.INITIAL_LENDER }
         )
@@ -354,11 +354,11 @@ contract('SharedLoan', accounts => {
     });
 
     it('succeeds if authorized', async () => {
-      await dydxMargin.cancelMarginCall(
+      await detaMargin.cancelMarginCall(
         SHARED_LOAN.ID,
         { from: SHARED_LOAN.TRUSTED_MARGIN_CALLERS[0] }
       );
-      const isCalled = await dydxMargin.isPositionCalled.call(SHARED_LOAN.ID);
+      const isCalled = await detaMargin.isPositionCalled.call(SHARED_LOAN.ID);
       expect(isCalled).to.be.false;
     });
   });
@@ -369,7 +369,7 @@ contract('SharedLoan', accounts => {
     beforeEach('set up position and margin-call', async () => {
       // set up the position and margin-call
       await setUpPosition();
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         SHARED_LOAN.ID,
         BIGNUMBERS.ZERO,
         { from: SHARED_LOAN.TX.loanOffering.owner }
@@ -379,8 +379,8 @@ contract('SharedLoan', accounts => {
 
       // expect proper state of the position
       const [isClosed, isCalled, state] = await Promise.all([
-        dydxMargin.isPositionClosed.call(SHARED_LOAN.ID),
-        dydxMargin.isPositionCalled.call(SHARED_LOAN.ID),
+        detaMargin.isPositionClosed.call(SHARED_LOAN.ID),
+        detaMargin.isPositionCalled.call(SHARED_LOAN.ID),
         SHARED_LOAN.CONTRACT.state.call()
       ]);
       expect(isClosed).to.be.false;
@@ -391,7 +391,7 @@ contract('SharedLoan', accounts => {
     it('succeeds for arbitrary caller if recipient is sharedLoan', async () => {
       await wait(SHARED_LOAN.TX.loanOffering.callTimeLimit);
 
-      await dydxMargin.forceRecoverCollateral(
+      await detaMargin.forceRecoverCollateral(
         SHARED_LOAN.ID,
         SHARED_LOAN.CONTRACT.address,
         { from: accounts[6] }
@@ -399,8 +399,8 @@ contract('SharedLoan', accounts => {
 
       // expect proper state of the position
       const [isClosed, isCalled, state] = await Promise.all([
-        dydxMargin.isPositionClosed.call(SHARED_LOAN.ID),
-        dydxMargin.isPositionCalled.call(SHARED_LOAN.ID),
+        detaMargin.isPositionClosed.call(SHARED_LOAN.ID),
+        detaMargin.isPositionCalled.call(SHARED_LOAN.ID),
         SHARED_LOAN.CONTRACT.state.call()
       ]);
       expect(isClosed).to.be.true;
@@ -412,7 +412,7 @@ contract('SharedLoan', accounts => {
       await wait(SHARED_LOAN.TX.loanOffering.callTimeLimit);
 
       await expectThrow(
-        dydxMargin.forceRecoverCollateral(
+        detaMargin.forceRecoverCollateral(
           SHARED_LOAN.ID,
           ADDRESSES.TEST[8],
           { from: accounts[6] }
@@ -471,7 +471,7 @@ contract('SharedLoan', accounts => {
         closer,
         amount.times(100)
       );
-      await dydxMargin.closePositionDirectly(
+      await detaMargin.closePositionDirectly(
         SHARED_LOAN.ID,
         amount,
         closer,
@@ -543,7 +543,7 @@ contract('SharedLoan', accounts => {
       expectWithinError(heldB2.minus(heldB1), expectMap[accountB][1], 1);
       expectWithinError(heldC2.minus(heldC1), expectMap[accountC][1], 1);
 
-      const isClosed = await dydxMargin.isPositionClosed.call(SHARED_LOAN.ID);
+      const isClosed = await detaMargin.isPositionClosed.call(SHARED_LOAN.ID);
       const principalPer = SHARED_LOAN.TX.principal;
       if (isClosed) {
         await expectSharedLoanBalances([
@@ -559,13 +559,13 @@ contract('SharedLoan', accounts => {
     }
 
     async function callForceRecover() {
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         SHARED_LOAN.ID,
         BIGNUMBERS.ZERO,
         { from: SHARED_LOAN.TRUSTED_MARGIN_CALLERS[0] }
       );
       await wait(SHARED_LOAN.TX.loanOffering.callTimeLimit);
-      await dydxMargin.forceRecoverCollateral(SHARED_LOAN.ID, SHARED_LOAN.CONTRACT.address);
+      await detaMargin.forceRecoverCollateral(SHARED_LOAN.ID, SHARED_LOAN.CONTRACT.address);
     }
 
     // ============ Before Each ============

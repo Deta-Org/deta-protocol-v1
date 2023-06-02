@@ -17,15 +17,15 @@ function multiplyByClosePercent(input, numerator = 1, denominator = 5) {
 }
 
 describe('#CloseWithoutCounterparty', () => {
-  let dydxMargin, openTx, erc20Contract, lender, principal, totalSupply;
+  let detaMargin, openTx, erc20Contract, lender, principal, totalSupply;
 
   async function configurePosition(initialHolder, accounts) {
-    dydxMargin = await Margin.deployed();
+    detaMargin = await Margin.deployed();
     openTx = await doOpenPosition(accounts);
     // Deploy an ERC20Short token
     erc20Contract = await ERC20Short.new(
       openTx.id,
-      dydxMargin.address,
+      detaMargin.address,
       initialHolder,
       [
         ADDRESSES.TEST[1],
@@ -34,7 +34,7 @@ describe('#CloseWithoutCounterparty', () => {
       []
     );
     // Transfer the position from the trader to the ERC20 token
-    await dydxMargin.transferPosition(openTx.id, erc20Contract.address, { from: openTx.trader });
+    await detaMargin.transferPosition(openTx.id, erc20Contract.address, { from: openTx.trader });
 
     lender = openTx.loanOffering.payer;
 
@@ -53,10 +53,10 @@ describe('#CloseWithoutCounterparty', () => {
       const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
       expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
-      const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+      const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
       // Receive heldTokens by burning tokens
-      await callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender);
+      await callCloseWithoutCounterparty(detaMargin, openTx, principal, lender);
 
       // It should burn the tokens
       const lenderAfter = await erc20Contract.balanceOf.call(lender);
@@ -82,18 +82,18 @@ describe('#CloseWithoutCounterparty', () => {
 
         // Create a new loan owner smart contract that implements CloseLoanDelegator
         const closeLoanDelegator =
-          await TestCloseLoanDelegator.new(dydxMargin.address, principal);
+          await TestCloseLoanDelegator.new(detaMargin.address, principal);
         // Transfer the loan to the CloseLoanDelegator
-        await dydxMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
+        await detaMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
 
         const heldToken = await ERC20.at(openTx.heldToken);
         const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
         expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
-        const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+        const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
         // Receive heldTokens by burning tokens
-        await callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender);
+        await callCloseWithoutCounterparty(detaMargin, openTx, principal, lender);
 
         const lenderAfter = await erc20Contract.balanceOf.call(lender);
         expect(lenderAfter.toNumber()).to.equal(0);
@@ -116,20 +116,20 @@ describe('#CloseWithoutCounterparty', () => {
 
         // Create a new loan owner smart contract that implements CloseLoanDelegator
         const closeLoanDelegator =
-          await TestCloseLoanDelegator.new(dydxMargin.address, principal);
+          await TestCloseLoanDelegator.new(detaMargin.address, principal);
         await closeLoanDelegator.setAddressToReturn(lender);
 
         // Transfer the loan to the CloseLoanDelegator
-        await dydxMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
+        await detaMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
 
         const heldToken = await ERC20.at(openTx.heldToken);
         const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
         expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
-        const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+        const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
         // Receive heldTokens by burning tokens
-        await callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender);
+        await callCloseWithoutCounterparty(detaMargin, openTx, principal, lender);
 
         const lenderAfter = await erc20Contract.balanceOf.call(lender);
         expect(lenderAfter.toNumber()).to.equal(0);
@@ -154,21 +154,21 @@ describe('#CloseWithoutCounterparty', () => {
         const allowedCloseAmount = multiplyByClosePercent(totalSupply, 1, 7)
         const closeLoanDelegator =
           await TestCloseLoanDelegator.new(
-            dydxMargin.address,
+            detaMargin.address,
             allowedCloseAmount
           );
 
         // Transfer the loan to the CloseLoanDelegator
-        await dydxMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
+        await detaMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
 
         const heldToken = await ERC20.at(openTx.heldToken);
         const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
         expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
-        const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+        const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
         // Receive heldTokens by burning tokens
-        await callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender);
+        await callCloseWithoutCounterparty(detaMargin, openTx, principal, lender);
 
         const lenderAfter = await erc20Contract.balanceOf.call(lender);
         expect(lenderAfter.toNumber()).to.equal(0);
@@ -193,18 +193,18 @@ describe('#CloseWithoutCounterparty', () => {
         // Create a new loan owner smart contract that implements CloseLoanDelegator
         const closeLoanDelegator =
           await TestCloseLoanDelegator.new(
-            dydxMargin.address,
+            detaMargin.address,
             0
           );
         // Transfer the loan to the CloseLoanDelegator
-        await dydxMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
+        await detaMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
 
         const heldToken = await ERC20.at(openTx.heldToken);
         const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
         expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
         // Receive heldTokens by burning tokens
-        await expectThrow(callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender));
+        await expectThrow(callCloseWithoutCounterparty(detaMargin, openTx, principal, lender));
       });
     });
 
@@ -216,18 +216,18 @@ describe('#CloseWithoutCounterparty', () => {
         // Create a new loan owner smart contract that implements CloseLoanDelegator
         const closeLoanDelegator =
           await TestCloseLoanDelegator.new(
-            dydxMargin.address,
+            detaMargin.address,
             principal.times(2)
           );
         // Transfer the loan to the CloseLoanDelegator
-        await dydxMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
+        await detaMargin.transferLoan(openTx.id, closeLoanDelegator.address, { from: lender });
 
         const heldToken = await ERC20.at(openTx.heldToken);
         const lenderHeldTokenBefore = await heldToken.balanceOf.call(lender);
         expect(lenderHeldTokenBefore.toNumber()).to.equal(0);
 
         // Receive heldTokens by burning tokens
-        await expectThrow(callCloseWithoutCounterparty(dydxMargin, openTx, principal, lender));
+        await expectThrow(callCloseWithoutCounterparty(detaMargin, openTx, principal, lender));
       });
     });
   });

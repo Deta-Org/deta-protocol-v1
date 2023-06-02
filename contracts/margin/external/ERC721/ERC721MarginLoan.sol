@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import { MarginCallDelegator } from "../../interfaces/lender/MarginCallDelegator
 
 /**
  * @title ERC721MarginLoan
- * @author dYdX
+ * @author deta
  *
  * Contract used to tokenize margin loans as ERC721-compliant non-fungible tokens. Holding the
  * token allows the holder to margin-call the position and be entitled to all payouts. Functionality
@@ -113,7 +113,7 @@ contract ERC721MarginLoan is
         address margin
     )
         public
-        ERC721Token("dYdX ERC721 Margin Loans", "d/LO")
+        ERC721Token("deta ERC721 Margin Loans", "d/LO")
         OnlyMargin(margin)
     {}
 
@@ -176,14 +176,14 @@ contract ERC721MarginLoan is
         );
 
         // require no un-withdrawn owedToken
-        uint256 totalRepaid = Margin(DYDX_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
+        uint256 totalRepaid = Margin(deta_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
         require(
             totalRepaid == owedTokensRepaidSinceLastWithdraw[positionId],
             "ERC721MarginLoan#untokenizeLoan: All owedToken must be withdrawn before untokenization"
         );
 
         burnPositionToken(owner, positionId);
-        Margin(DYDX_MARGIN).transferLoan(positionId, to);
+        Margin(deta_MARGIN).transferLoan(positionId, to);
 
         emit LoanUntokenized(positionId, owner, to);
     }
@@ -242,13 +242,13 @@ contract ERC721MarginLoan is
     {
         _mint(from, uint256(positionId));
 
-        uint256 owedTokenRepaid = Margin(DYDX_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
+        uint256 owedTokenRepaid = Margin(deta_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
         if (owedTokenRepaid > 0) {
             owedTokensRepaidSinceLastWithdraw[positionId] = owedTokenRepaid;
         }
 
         owedTokenAddress[positionId] =
-            Margin(DYDX_MARGIN).getPositionOwedToken(positionId);
+            Margin(deta_MARGIN).getPositionOwedToken(positionId);
 
         emit LoanTokenized(positionId, from);
 
@@ -380,7 +380,7 @@ contract ERC721MarginLoan is
         address owner = ownerOfPosition(positionId);
 
         address owedToken = owedTokenAddress[positionId];
-        uint256 totalRepaid = Margin(DYDX_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
+        uint256 totalRepaid = Margin(deta_MARGIN).getTotalOwedTokenRepaidToLender(positionId);
         uint256 tokensToSend = totalRepaid.sub(owedTokensRepaidSinceLastWithdraw[positionId]);
 
         if (tokensToSend == 0) {
@@ -389,7 +389,7 @@ contract ERC721MarginLoan is
 
         // update state based on whether the position is closed or not
         bool completelyRepaid = false;
-        if (Margin(DYDX_MARGIN).isPositionClosed(positionId)) {
+        if (Margin(deta_MARGIN).isPositionClosed(positionId)) {
             burnPositionToken(owner, positionId);
             completelyRepaid = true;
         } else {

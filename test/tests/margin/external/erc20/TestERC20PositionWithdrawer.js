@@ -17,7 +17,7 @@ const { wait } = require('@digix/tempo')(web3);
 const BigNumber = require('bignumber.js');
 
 contract('ERC20PositionWithdrawer', accounts => {
-  let dydxMargin;
+  let detaMargin;
   let owedToken;
   let heldToken;
   let openDirectlyExchangeWrapper;
@@ -41,7 +41,7 @@ contract('ERC20PositionWithdrawer', accounts => {
 
   before('Set up TokenProxy, Margin accounts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       owedToken,
       heldToken,
       openDirectlyExchangeWrapper,
@@ -65,7 +65,7 @@ contract('ERC20PositionWithdrawer', accounts => {
     POSITION.TX = await doOpenPosition(accounts.slice(1), { salt: POSITION.SALT });
     POSITION.ID = POSITION.TX.id;
     POSITION.PRINCIPAL = POSITION.TX.principal;
-    POSITION.NUM_TOKENS = await dydxMargin.getPositionPrincipal.call(POSITION.ID);
+    POSITION.NUM_TOKENS = await detaMargin.getPositionPrincipal.call(POSITION.ID);
   }
 
   async function setUpTokens() {
@@ -73,7 +73,7 @@ contract('ERC20PositionWithdrawer', accounts => {
     POSITION.TRUSTED_WITHDRAWERS = [withdrawer.address];
     POSITION.TOKEN_CONTRACT = await ERC20Short.new(
       POSITION.ID,
-      dydxMargin.address,
+      detaMargin.address,
       INITIAL_TOKEN_HOLDER,
       POSITION.TRUSTED_RECIPIENTS,
       POSITION.TRUSTED_WITHDRAWERS,
@@ -81,7 +81,7 @@ contract('ERC20PositionWithdrawer', accounts => {
   }
 
   async function transferPositionsToTokens() {
-    await dydxMargin.transferPosition(
+    await detaMargin.transferPosition(
       POSITION.ID,
       POSITION.TOKEN_CONTRACT.address,
       { from: POSITION.TX.trader }
@@ -102,19 +102,19 @@ contract('ERC20PositionWithdrawer', accounts => {
     const requiredDeposit = new BigNumber(10);
 
     if (args.cancel) {
-      await dydxMargin.cancelMarginCall(
+      await detaMargin.cancelMarginCall(
         POSITION.ID,
         { from : POSITION.TX.loanOffering.payer }
       );
     } else {
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         POSITION.ID,
         requiredDeposit,
         { from : POSITION.TX.loanOffering.payer }
       );
     }
 
-    const fullCalled = await dydxMargin.isPositionCalled.call(POSITION.ID);
+    const fullCalled = await detaMargin.isPositionCalled.call(POSITION.ID);
     expect(fullCalled).to.be.eq(!args.cancel);
   }
 
@@ -134,11 +134,11 @@ contract('ERC20PositionWithdrawer', accounts => {
       // close half and force-recover
       const lender = POSITION.TX.loanOffering.payer;
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         POSITION.TX,
         POSITION.PRINCIPAL.div(2)
       );
-      await dydxMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
+      await detaMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
 
       // rando can't withdraw
       const receipt = await transact(
@@ -158,7 +158,7 @@ contract('ERC20PositionWithdrawer', accounts => {
       const heldTokenAmount = new BigNumber("1e18");
       const lender = POSITION.TX.loanOffering.payer;
       await heldToken.issueTo(POSITION.TOKEN_CONTRACT.address, heldTokenAmount);
-      await dydxMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
+      await detaMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
 
       // set up exchange with tokens
       const tokenToReturn = new BigNumber("1e9");
@@ -199,7 +199,7 @@ contract('ERC20PositionWithdrawer', accounts => {
       const heldTokenAmount = new BigNumber("1e18");
       const lender = POSITION.TX.loanOffering.payer;
       await heldToken.issueTo(POSITION.TOKEN_CONTRACT.address, heldTokenAmount);
-      await dydxMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
+      await detaMargin.forceRecoverCollateral(POSITION.ID, lender, { from: lender });
 
       // set up exchange with weth
       const wethToReturn = new BigNumber("1e9");

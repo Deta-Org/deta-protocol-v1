@@ -38,13 +38,13 @@ describe('#forceRecoverCollateral', () => {
         heldToken.balanceOf.call(Vault.address),
       ]);
 
-      const { dydxMargin, openTx } = await doOpenPositionAndCall(accounts);
+      const { detaMargin, openTx } = await doOpenPositionAndCall(accounts);
       await wait(openTx.loanOffering.callTimeLimit);
 
-      const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+      const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
       const recipient = accounts[9];
 
-      const tx = await dydxMargin.forceRecoverCollateral(
+      const tx = await detaMargin.forceRecoverCollateral(
         openTx.id,
         recipient,
         { from: openTx.loanOffering.owner }
@@ -65,8 +65,8 @@ describe('#forceRecoverCollateral', () => {
         owedToken.balanceOf.call(vault.address),
         vault.totalBalances.call(heldToken.address),
         heldToken.balanceOf.call(vault.address),
-        dydxMargin.containsPosition.call(openTx.id),
-        dydxMargin.isPositionClosed.call(openTx.id),
+        detaMargin.containsPosition.call(openTx.id),
+        detaMargin.isPositionClosed.call(openTx.id),
         heldToken.balanceOf.call(recipient)
       ]);
 
@@ -88,10 +88,10 @@ describe('#forceRecoverCollateral', () => {
 
   contract('Margin', accounts => {
     it('only allows lender to call', async () => {
-      const { dydxMargin, openTx } = await doOpenPositionAndCall(accounts);
+      const { detaMargin, openTx } = await doOpenPositionAndCall(accounts);
       await wait(openTx.loanOffering.callTimeLimit);
 
-      await expectThrow(dydxMargin.forceRecoverCollateral(
+      await expectThrow(detaMargin.forceRecoverCollateral(
         openTx.id,
         openTx.loanOffering.owner,
         { from: accounts[7] }
@@ -121,12 +121,12 @@ describe('#forceRecoverCollateral', () => {
         heldToken.balanceOf.call(Vault.address),
       ]);
 
-      const { dydxMargin, openTx } =
+      const { detaMargin, openTx } =
         await doOpenPositionAndCall(accounts, { salt: salt++ });
 
       await wait(openTx.loanOffering.callTimeLimit);
 
-      const heldTokenBalance = await dydxMargin.getPositionBalance.call(openTx.id);
+      const heldTokenBalance = await detaMargin.getPositionBalance.call(openTx.id);
 
       const badRecoverer = accounts[6];
       const badRecipient = accounts[7];
@@ -141,14 +141,14 @@ describe('#forceRecoverCollateral', () => {
       );
 
       // Transfer loans to testFRCDs
-      await dydxMargin.transferLoan(
+      await detaMargin.transferLoan(
         openTx.id,
         testFRCD.address,
         { from: openTx.loanOffering.owner }
       );
 
       // Throw for random accounts
-      await expectThrow(dydxMargin.forceRecoverCollateral(
+      await expectThrow(detaMargin.forceRecoverCollateral(
         openTx.id,
         badRecipient,
         { from: badRecoverer }
@@ -162,7 +162,7 @@ describe('#forceRecoverCollateral', () => {
         finalRecipient = recipient;
         finalRecoverer = badRecoverer;
       }
-      await dydxMargin.forceRecoverCollateral(
+      await detaMargin.forceRecoverCollateral(
         openTx.id,
         finalRecipient,
         { from: finalRecoverer }
@@ -181,8 +181,8 @@ describe('#forceRecoverCollateral', () => {
         owedToken.balanceOf.call(vault.address),
         vault.totalBalances.call(heldToken.address),
         heldToken.balanceOf.call(vault.address),
-        dydxMargin.containsPosition.call(openTx.id),
-        dydxMargin.isPositionClosed.call(openTx.id),
+        detaMargin.containsPosition.call(openTx.id),
+        detaMargin.isPositionClosed.call(openTx.id),
         heldToken.balanceOf.call(finalRecipient),
       ]);
 
@@ -203,8 +203,8 @@ describe('#forceRecoverCollateral', () => {
 
   contract('Margin', accounts => {
     it('does not allow before call time limit elapsed', async () => {
-      const { dydxMargin, openTx } = await doOpenPositionAndCall(accounts);
-      await expectThrow(dydxMargin.forceRecoverCollateral(
+      const { detaMargin, openTx } = await doOpenPositionAndCall(accounts);
+      await expectThrow(detaMargin.forceRecoverCollateral(
         openTx.id,
         openTx.loanOffering.owner,
         { from: openTx.loanOffering.owner }
@@ -213,7 +213,7 @@ describe('#forceRecoverCollateral', () => {
   });
   contract('Margin', accounts => {
     it('does not allow if not called or not reached maximumDuration+callTimeLimit', async () => {
-      const dydxMargin = await Margin.deployed();
+      const detaMargin = await Margin.deployed();
       const openTx = await doOpenPosition(accounts);
 
       const maxDuration = openTx.loanOffering.maxDuration;
@@ -223,7 +223,7 @@ describe('#forceRecoverCollateral', () => {
 
       // loan was not called and it is too early
       await wait(almostMaxDuration);
-      await expectThrow(dydxMargin.forceRecoverCollateral(
+      await expectThrow(detaMargin.forceRecoverCollateral(
         openTx.id,
         openTx.loanOffering.owner,
         { from: openTx.loanOffering.owner}
@@ -231,7 +231,7 @@ describe('#forceRecoverCollateral', () => {
 
       // now it's okay because current time is past maxDuration+callTimeLimit
       await wait(callTimeLimit + 100);
-      await dydxMargin.forceRecoverCollateral(
+      await detaMargin.forceRecoverCollateral(
         openTx.id,
         openTx.loanOffering.owner,
         { from: openTx.loanOffering.owner }

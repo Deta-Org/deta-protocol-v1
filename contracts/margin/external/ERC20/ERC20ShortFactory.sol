@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import { ERC20Short } from "./ERC20Short.sol";
 
 /**
  * @title ERC20ShortFactory
- * @author dYdX
+ * @author deta
  *
  * This contract is used to deploy new ERC20Short contracts. A new ERC20Short is
  * automatically deployed whenever a position is transferred to this contract. Ownership of that
@@ -58,7 +58,7 @@ contract ERC20ShortFactory is ERC20PositionFactory {
     {
         return new ERC20Short(
             positionId,
-            DYDX_MARGIN,
+            deta_MARGIN,
             from,
             TRUSTED_RECIPIENTS,
             TRUSTED_WITHDRAWERS

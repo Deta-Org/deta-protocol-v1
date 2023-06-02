@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import { TokenInteract } from "../../../lib/TokenInteract.sol";
 
 /**
  * @title EthWrapperForBucketLender
- * @author dYdX
+ * @author deta
  *
  * Takes ETH directly, wraps it, then sends it to a bucket lender on behalf of a user.
  */

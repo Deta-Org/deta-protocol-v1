@@ -1,7 +1,7 @@
-FROM dydxprotocol/node:8.12-alpine-v1
+FROM detaprotocol/node:8.12-alpine-v1
 
-RUN mkdir -p /home/dydx/app
-WORKDIR /home/dydx/app
+RUN mkdir -p /home/deta/app
+WORKDIR /home/deta/app
 
 COPY ./package.json ./package-lock.json ./
 RUN npm ci --loglevel warn

@@ -26,7 +26,7 @@ contract('PositionGetters', (accounts) => {
 
   // ============ Constants ============
 
-  let dydxMargin, heldToken;
+  let detaMargin, heldToken;
   let positionId;
   let openTx;
   let salt = 872354;
@@ -63,24 +63,24 @@ contract('PositionGetters', (accounts) => {
       balance,
       totalRepaid
     ] = await Promise.all([
-      dydxMargin.getPosition.call(positionId),
-      dydxMargin.getPositionLender.call(positionId),
-      dydxMargin.getPositionOwner.call(positionId),
-      dydxMargin.getPositionHeldToken.call(positionId),
-      dydxMargin.getPositionOwedToken.call(positionId),
-      dydxMargin.getPositionPrincipal.call(positionId),
-      dydxMargin.getPositionInterestRate.call(positionId),
-      dydxMargin.getPositionRequiredDeposit.call(positionId),
-      dydxMargin.getPositionStartTimestamp.call(positionId),
-      dydxMargin.getPositionCallTimestamp.call(positionId),
-      dydxMargin.getPositionCallTimeLimit.call(positionId),
-      dydxMargin.getPositionMaxDuration.call(positionId),
-      dydxMargin.getPositioninterestPeriod.call(positionId),
-      dydxMargin.containsPosition.call(positionId),
-      dydxMargin.isPositionCalled.call(positionId),
-      dydxMargin.isPositionClosed.call(positionId),
-      dydxMargin.getPositionBalance.call(positionId),
-      dydxMargin.getTotalOwedTokenRepaidToLender.call(positionId)
+      detaMargin.getPosition.call(positionId),
+      detaMargin.getPositionLender.call(positionId),
+      detaMargin.getPositionOwner.call(positionId),
+      detaMargin.getPositionHeldToken.call(positionId),
+      detaMargin.getPositionOwedToken.call(positionId),
+      detaMargin.getPositionPrincipal.call(positionId),
+      detaMargin.getPositionInterestRate.call(positionId),
+      detaMargin.getPositionRequiredDeposit.call(positionId),
+      detaMargin.getPositionStartTimestamp.call(positionId),
+      detaMargin.getPositionCallTimestamp.call(positionId),
+      detaMargin.getPositionCallTimeLimit.call(positionId),
+      detaMargin.getPositionMaxDuration.call(positionId),
+      detaMargin.getPositioninterestPeriod.call(positionId),
+      detaMargin.containsPosition.call(positionId),
+      detaMargin.isPositionCalled.call(positionId),
+      detaMargin.isPositionClosed.call(positionId),
+      detaMargin.getPositionBalance.call(positionId),
+      detaMargin.getTotalOwedTokenRepaidToLender.call(positionId)
     ]);
 
     let [
@@ -96,26 +96,26 @@ contract('PositionGetters', (accounts) => {
         owedAmountAtTime,
         amountForIncreaseAtTime,
       ] = await Promise.all([
-        dydxMargin.getTimeUntilInterestIncrease.call(positionId),
-        dydxMargin.getPositionOwedAmount.call(positionId),
-        dydxMargin.getPositionOwedAmountAtTime.call(
+        detaMargin.getTimeUntilInterestIncrease.call(positionId),
+        detaMargin.getPositionOwedAmount.call(positionId),
+        detaMargin.getPositionOwedAmountAtTime.call(
           positionId, halfPrincipal, futureTimestamp),
-        dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+        detaMargin.getLenderAmountForIncreasePositionAtTime.call(
           positionId, halfPrincipal, futureTimestamp)
       ]);
     } else {
       await expectThrow(
-        dydxMargin.getTimeUntilInterestIncrease.call(positionId)
+        detaMargin.getTimeUntilInterestIncrease.call(positionId)
       );
       await expectThrow(
-        dydxMargin.getPositionOwedAmount.call(positionId)
+        detaMargin.getPositionOwedAmount.call(positionId)
       );
       await expectThrow(
-        dydxMargin.getPositionOwedAmountAtTime.call(
+        detaMargin.getPositionOwedAmountAtTime.call(
           positionId, halfPrincipal, futureTimestamp)
       );
       await expectThrow(
-        dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+        detaMargin.getLenderAmountForIncreasePositionAtTime.call(
           positionId, halfPrincipal, futureTimestamp)
       );
     }
@@ -162,7 +162,7 @@ contract('PositionGetters', (accounts) => {
 
   before('get global contracts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       heldToken
     ] = await Promise.all([
       Margin.deployed(),
@@ -266,8 +266,8 @@ contract('PositionGetters', (accounts) => {
     it('check values for lender and owner', async () => {
       const newOwner = ADDRESSES.TEST[1];
       const newLender = ADDRESSES.TEST[2];
-      await dydxMargin.transferPosition(openTx.id, newOwner, { from: openTx.owner});
-      await dydxMargin.transferLoan(openTx.id, newLender, { from: openTx.loanOffering.owner});
+      await detaMargin.transferPosition(openTx.id, newOwner, { from: openTx.owner});
+      await detaMargin.transferLoan(openTx.id, newLender, { from: openTx.loanOffering.owner});
       const position = await getGetters(positionId);
       expect(position.lender).to.equal(newLender);
       expect(position.owner).to.equal(newOwner);
@@ -277,16 +277,16 @@ contract('PositionGetters', (accounts) => {
   describe('#getPositionPrincipal and #getPositionBalance', () => {
     it('check values for principal and balance', async () => {
       const [principal0, balance0] = await Promise.all([
-        dydxMargin.getPositionPrincipal.call(BYTES32.BAD_ID),
-        dydxMargin.getPositionBalance.call(BYTES32.BAD_ID),
+        detaMargin.getPositionPrincipal.call(BYTES32.BAD_ID),
+        detaMargin.getPositionBalance.call(BYTES32.BAD_ID),
       ]);
       expect(principal0).to.be.bignumber.equal(0);
       expect(balance0).to.be.bignumber.equal(0);
 
       const { expectedHeldTokenBalance } = getTokenAmountsFromOpen(openTx);
       const [principal1, balance1] = await Promise.all([
-        dydxMargin.getPositionPrincipal.call(positionId),
-        dydxMargin.getPositionBalance.call(positionId),
+        detaMargin.getPositionPrincipal.call(positionId),
+        detaMargin.getPositionBalance.call(positionId),
       ]);
       expect(principal1).to.be.bignumber.equal(openTx.principal);
       expect(balance1).to.be.bignumber.equal(expectedHeldTokenBalance);
@@ -298,8 +298,8 @@ contract('PositionGetters', (accounts) => {
         closeAmount
       );
 
-      const principal2 = await dydxMargin.getPositionPrincipal.call(positionId);
-      const balance2 = await dydxMargin.getPositionBalance.call(positionId);
+      const principal2 = await detaMargin.getPositionPrincipal.call(positionId);
+      const balance2 = await detaMargin.getPositionBalance.call(positionId);
       expect(principal2).to.be.bignumber.equal(principal1.minus(closeAmount));
       const expectedHeldTokenBalance2 = getPartialAmount(expectedHeldTokenBalance, 2, 1, true);
       expect(balance2).to.be.bignumber.equal(expectedHeldTokenBalance2);
@@ -313,10 +313,10 @@ contract('PositionGetters', (accounts) => {
         increasePosTx.trader,
         increasePosTx.depositAmount.times(4)
       );
-      await callIncreasePosition(dydxMargin, increasePosTx);
+      await callIncreasePosition(detaMargin, increasePosTx);
 
-      const principal3 = await dydxMargin.getPositionPrincipal.call(positionId);
-      const balance3 = await dydxMargin.getPositionBalance.call(positionId);
+      const principal3 = await detaMargin.getPositionPrincipal.call(positionId);
+      const balance3 = await detaMargin.getPositionBalance.call(positionId);
       expect(principal3).to.be.bignumber.equal(openTx.principal.times(3).div(2));
       const expectedHeldTokenBalance3 = getPartialAmount(expectedHeldTokenBalance2, 1, 3, true);
       expect(balance3).to.be.bignumber.equal(expectedHeldTokenBalance3);
@@ -331,7 +331,7 @@ contract('PositionGetters', (accounts) => {
       expect(before.requiredDeposit).to.be.bignumber.equal(0);
 
       const depositAmount = new BigNumber(12345);
-      const marginCallTx = await dydxMargin.marginCall(
+      const marginCallTx = await detaMargin.marginCall(
         positionId,
         depositAmount,
         { from: openTx.loanOffering.owner }
@@ -343,7 +343,7 @@ contract('PositionGetters', (accounts) => {
       expect(after.callTimestamp).to.be.bignumber.equal(callTimestamp);
       expect(after.requiredDeposit).to.be.bignumber.equal(depositAmount);
 
-      await dydxMargin.cancelMarginCall(
+      await detaMargin.cancelMarginCall(
         positionId,
         { from: openTx.loanOffering.owner }
       );
@@ -363,28 +363,28 @@ contract('PositionGetters', (accounts) => {
       expect(position.interestPeriod).to.be.bignumber.equal(oneDay);
 
       await wait(1);
-      const t1 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t1 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expectWithinError(t1, oneDay, standardTimeError);
 
       await wait(oneDay);
-      const t2 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t2 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expectWithinError(t2, t1, standardTimeError);
 
       await wait(oneHour);
-      const t3 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t3 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expectWithinError(t3, t2 - oneHour, standardTimeError);
 
       await wait(oneHour);
-      const t4 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t4 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expectWithinError(t4, t3 - oneHour, standardTimeError);
 
       await wait(oneDay);
-      const t5 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t5 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expectWithinError(t5, t4, standardTimeError);
 
       // test after maxDuration has passed
       await wait(openTx.loanOffering.maxDuration);
-      const t6 = await dydxMargin.getTimeUntilInterestIncrease.call(positionId);
+      const t6 = await detaMargin.getTimeUntilInterestIncrease.call(positionId);
       expect(t6).to.be.bignumber.equal(0);
     });
   });
@@ -399,18 +399,18 @@ contract('PositionGetters', (accounts) => {
       // ensure no interest works
       /*
       // Unable to test without time increasing
-      const owedAmount1 = await dydxMargin.getPositionOwedAmount.call(positionId);
+      const owedAmount1 = await detaMargin.getPositionOwedAmount.call(positionId);
       expect(owedAmount1).to.be.bignumber.equal(openTx.principal);
       */
 
       // ensure interest accrued works
       await wait(oneDay / 2);
-      const owedAmount2 = await dydxMargin.getPositionOwedAmount.call(positionId);
+      const owedAmount2 = await detaMargin.getPositionOwedAmount.call(positionId);
       expectInterest(openTx.principal, position.interestRate, 1, owedAmount2);
 
       // ensure interest accrued works again
       await wait(oneDay * 49);
-      const owedAmount3 = await dydxMargin.getPositionOwedAmount.call(positionId);
+      const owedAmount3 = await detaMargin.getPositionOwedAmount.call(positionId);
       const exp2 = Math.exp(position.interestRate.div("1e8").mul(50).div(365));
       expectWithinError(owedAmount3, openTx.principal.mul(exp2.toString()), 100);
     });
@@ -426,7 +426,7 @@ contract('PositionGetters', (accounts) => {
 
       // ensure negative time doesn't work
       await expectThrow(
-        dydxMargin.getPositionOwedAmountAtTime.call(
+        detaMargin.getPositionOwedAmountAtTime.call(
           positionId,
           openTx.principal,
           position.startTimestamp.minus(oneDay)
@@ -434,7 +434,7 @@ contract('PositionGetters', (accounts) => {
       );
 
       // ensure no interest works
-      const owedAmount1 = await dydxMargin.getPositionOwedAmountAtTime.call(
+      const owedAmount1 = await detaMargin.getPositionOwedAmountAtTime.call(
         positionId,
         openTx.principal,
         position.startTimestamp
@@ -442,7 +442,7 @@ contract('PositionGetters', (accounts) => {
       expect(owedAmount1).to.be.bignumber.equal(openTx.principal);
 
       // ensure interest accrued works
-      const owedAmount2 = await dydxMargin.getPositionOwedAmountAtTime.call(
+      const owedAmount2 = await detaMargin.getPositionOwedAmountAtTime.call(
         positionId,
         openTx.principal,
         futureTime
@@ -451,7 +451,7 @@ contract('PositionGetters', (accounts) => {
       expectWithinError(owedAmount2, openTx.principal.mul(exp.toString()), 100);
 
       // ensure different principal amount work
-      const owedAmount3 = await dydxMargin.getPositionOwedAmountAtTime.call(
+      const owedAmount3 = await detaMargin.getPositionOwedAmountAtTime.call(
         positionId,
         openTx.principal.div(2),
         futureTime
@@ -459,7 +459,7 @@ contract('PositionGetters', (accounts) => {
       expectWithinError(owedAmount3, owedAmount2.div(2), 1);
 
       // ensure different principal amount work (too much principal)
-      const owedAmount4 = await dydxMargin.getPositionOwedAmountAtTime.call(
+      const owedAmount4 = await detaMargin.getPositionOwedAmountAtTime.call(
         positionId,
         openTx.principal.mul(2),
         futureTime
@@ -478,7 +478,7 @@ contract('PositionGetters', (accounts) => {
 
       // ensure negative time doesn't work
       await expectThrow(
-        dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+        detaMargin.getLenderAmountForIncreasePositionAtTime.call(
           positionId,
           openTx.principal,
           position.startTimestamp.minus(oneDay)
@@ -486,7 +486,7 @@ contract('PositionGetters', (accounts) => {
       );
 
       // ensure no interest works
-      const owedAmount1 = await dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+      const owedAmount1 = await detaMargin.getLenderAmountForIncreasePositionAtTime.call(
         positionId,
         openTx.principal,
         position.startTimestamp.plus(2) // ensure it rounds down to startTimestamp
@@ -494,7 +494,7 @@ contract('PositionGetters', (accounts) => {
       expect(owedAmount1).to.be.bignumber.equal(openTx.principal);
 
       // ensure interest accrued works
-      const owedAmount2 = await dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+      const owedAmount2 = await detaMargin.getLenderAmountForIncreasePositionAtTime.call(
         positionId,
         openTx.principal,
         futureTime
@@ -502,7 +502,7 @@ contract('PositionGetters', (accounts) => {
       expectInterest(openTx.principal, position.interestRate, 50, owedAmount2);
 
       // ensure different principal amount work
-      const owedAmount3 = await dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+      const owedAmount3 = await detaMargin.getLenderAmountForIncreasePositionAtTime.call(
         positionId,
         openTx.principal.div(2),
         futureTime
@@ -510,7 +510,7 @@ contract('PositionGetters', (accounts) => {
       expectWithinError(owedAmount3, owedAmount2.div(2), 1);
 
       // ensure different principal amount work (more than original)
-      const owedAmount4 = await dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+      const owedAmount4 = await detaMargin.getLenderAmountForIncreasePositionAtTime.call(
         positionId,
         openTx.principal.mul(2),
         futureTime
@@ -540,12 +540,12 @@ contract('PositionGetters', (accounts) => {
       ]);
 
       const [amount0, amount1] = await Promise.all([
-        dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+        detaMargin.getLenderAmountForIncreasePositionAtTime.call(
           zeroPeriodOpenTx.id,
           zeroPeriodOpenTx.principal,
           position0.startTimestamp
         ),
-        dydxMargin.getLenderAmountForIncreasePositionAtTime.call(
+        detaMargin.getLenderAmountForIncreasePositionAtTime.call(
           onePeriodOpenTx.id,
           onePeriodOpenTx.principal,
           position1.startTimestamp
@@ -604,8 +604,8 @@ contract('PositionGetters', (accounts) => {
       );
 
       const [timeUntilOneIncrease, timeUntilZeroIncrease] = await Promise.all([
-        dydxMargin.getTimeUntilInterestIncrease.call(onePeriodOpenTx.id),
-        dydxMargin.getTimeUntilInterestIncrease.call(zeroPeriodOpenTx.id),
+        detaMargin.getTimeUntilInterestIncrease.call(onePeriodOpenTx.id),
+        detaMargin.getTimeUntilInterestIncrease.call(zeroPeriodOpenTx.id),
       ]);
 
       expect(timeUntilOneIncrease).to.be.bignumber.eq(1);

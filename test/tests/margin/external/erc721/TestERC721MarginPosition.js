@@ -24,12 +24,12 @@ const {
 const { issueAndSetAllowance } = require('../../../../helpers/TokenHelper');
 
 contract('ERC721MarginPosition', accounts => {
-  let dydxMargin, erc721Contract, heldToken, owedToken;
+  let detaMargin, erc721Contract, heldToken, owedToken;
   let salt = 1111;
 
   before('retrieve deployed contracts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       erc721Contract,
       heldToken,
       owedToken
@@ -46,8 +46,8 @@ contract('ERC721MarginPosition', accounts => {
   describe('Constructor', () => {
     it('sets constants correctly', async () => {
       const contract = await ERC721MarginPosition.new(Margin.address);
-      const dydxMarginAddress = await contract.DYDX_MARGIN.call();
-      expect(dydxMarginAddress).to.equal(Margin.address);
+      const detaMarginAddress = await contract.deta_MARGIN.call();
+      expect(detaMarginAddress).to.equal(Margin.address);
     });
   });
 
@@ -78,13 +78,13 @@ contract('ERC721MarginPosition', accounts => {
       const sellOrder = await createSignedV1SellOrder(accounts, { salt: salt++ });
       await issueTokensAndSetAllowancesForClose(openTx, sellOrder);
       await callClosePosition(
-        dydxMargin,
+        detaMargin,
         openTx,
         sellOrder,
         openTx.principal.div(2).floor());
 
       // transfer position to ERC20ShortFactory
-      await dydxMargin.transferPosition(openTx.id, erc721Contract.address);
+      await detaMargin.transferPosition(openTx.id, erc721Contract.address);
       const owner = await erc721Contract.ownerOf.call(uint256(openTx.id));
       expect(owner).to.equal(accounts[0]);
     });
@@ -127,8 +127,8 @@ contract('ERC721MarginPosition', accounts => {
       );
       addedPrincipal = openTx.principal.div(2).floor();
       const [principal, amountHeld] = await Promise.all([
-        dydxMargin.getPositionPrincipal(openTx.id),
-        dydxMargin.getPositionBalance(openTx.id),
+        detaMargin.getPositionPrincipal(openTx.id),
+        detaMargin.getPositionBalance(openTx.id),
       ]);
       heldTokenAmount = getPartialAmount(
         addedPrincipal,
@@ -146,7 +146,7 @@ contract('ERC721MarginPosition', accounts => {
       );
 
       await expectThrow(
-        dydxMargin.increaseWithoutCounterparty(
+        detaMargin.increaseWithoutCounterparty(
           openTx.id,
           addedPrincipal,
           { from: openTx.loanOffering.owner }
@@ -155,7 +155,7 @@ contract('ERC721MarginPosition', accounts => {
     });
 
     it('succeeds for owner', async () => {
-      await dydxMargin.transferLoan(
+      await detaMargin.transferLoan(
         openTx.id,
         openTx.trader,
         { from: openTx.loanOffering.owner }
@@ -167,7 +167,7 @@ contract('ERC721MarginPosition', accounts => {
         heldTokenAmount
       );
 
-      await dydxMargin.increaseWithoutCounterparty(
+      await detaMargin.increaseWithoutCounterparty(
         openTx.id,
         addedPrincipal,
         { from: openTx.trader }
@@ -201,7 +201,7 @@ contract('ERC721MarginPosition', accounts => {
       );
 
       await expectThrow(
-        dydxMargin.depositCollateral(
+        detaMargin.depositCollateral(
           openTx.id,
           heldTokenAmount,
           { from: rando }
@@ -218,7 +218,7 @@ contract('ERC721MarginPosition', accounts => {
         heldTokenAmount
       );
 
-      await dydxMargin.depositCollateral(
+      await detaMargin.depositCollateral(
         openTx.id,
         heldTokenAmount,
         { from: openTx.trader }
@@ -323,7 +323,7 @@ contract('ERC721MarginPosition', accounts => {
     it('succeeds when called by ownerOf', async () => {
       await erc721Contract.untokenizePosition(openTx.id, receiver, { from: trader });
       await expectThrow(erc721Contract.ownerOf.call(uint256(openTx.id)));
-      const newOwner = await dydxMargin.getPositionOwner.call(openTx.id);
+      const newOwner = await detaMargin.getPositionOwner.call(openTx.id);
       expect(newOwner).to.equal(receiver);
     });
 
@@ -368,7 +368,7 @@ contract('ERC721MarginPosition', accounts => {
         );
         await initOwedToken(openTx.trader);
         await callClosePositionDirectly(
-          dydxMargin,
+          detaMargin,
           openTx,
           openTx.principal,
           {
@@ -450,7 +450,7 @@ contract('ERC721MarginPosition', accounts => {
     it('succeeds for owner', async () => {
       await initOwedToken(openTx.trader);
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal,
         {
@@ -465,7 +465,7 @@ contract('ERC721MarginPosition', accounts => {
       await erc721Contract.transferFrom(openTx.trader, erc721Contract.address, uint256(openTx.id));
       await expectThrow(
         callClosePositionDirectly(
-          dydxMargin,
+          detaMargin,
           openTx,
           openTx.principal,
           {
@@ -479,7 +479,7 @@ contract('ERC721MarginPosition', accounts => {
     it('succeeds for approved recipients', async () => {
       await initOwedToken(unapprovedAcct);
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal,
         {
@@ -492,7 +492,7 @@ contract('ERC721MarginPosition', accounts => {
     it('succeeds for approved closers', async () => {
       await initOwedToken(approvedCloser);
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal,
         {
@@ -505,7 +505,7 @@ contract('ERC721MarginPosition', accounts => {
     it('fails for non-approved recipients/closers', async () => {
       await initOwedToken(unapprovedAcct);
       await expectThrow(callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal,
         {

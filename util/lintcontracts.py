@@ -69,7 +69,7 @@ def lintCommentHeader(dir, filepath, solidityVersion):
     fileName = os.path.basename(filepath)
     strippedFileName = fileName.split(".sol")[0]
     titleLine = " * @title " + strippedFileName + "\n"
-    authorLine = " * @author dYdX\n"
+    authorLine = " * @author deta\n"
     blankLine = " *\n"
     solidityLine = "pragma solidity " + solidityVersion + ";\n"
     allLines = open(filepath, 'r').readlines()

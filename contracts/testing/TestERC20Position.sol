@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import { TokenInteract } from "../lib/TokenInteract.sol";
 
 /**
  * @title ERC20Position
- * @author dYdX
+ * @author deta
  *
  * Shared code for ERC20Short and ERC20Long
  */

@@ -47,11 +47,11 @@ describe('OpenDirectlyExchangeWrapper', () => {
 
   describe('#exchange', () => {
     contract('OpenDirectlyExchangeWrapper', accounts => {
-      let dydxMargin, owedToken, heldToken, exchangeWrapper;
+      let detaMargin, owedToken, heldToken, exchangeWrapper;
 
       before('set up contracts', async () => {
         [
-          dydxMargin,
+          detaMargin,
           owedToken,
           heldToken,
           exchangeWrapper
@@ -97,7 +97,7 @@ describe('OpenDirectlyExchangeWrapper', () => {
           heldToken.balanceOf.call(openTx.trader)
         ]);
 
-        const response = await callOpenPosition(dydxMargin, openTx);
+        const response = await callOpenPosition(detaMargin, openTx);
 
         const [
           payerOwed1,
@@ -109,8 +109,8 @@ describe('OpenDirectlyExchangeWrapper', () => {
           owedToken.balanceOf.call(openTx.loanOffering.payer),
           owedToken.balanceOf.call(openTx.trader),
           heldToken.balanceOf.call(openTx.trader),
-          dydxMargin.getPositionBalance.call(response.id),
-          dydxMargin.getPositionPrincipal.call(response.id)
+          detaMargin.getPositionBalance.call(response.id),
+          detaMargin.getPositionPrincipal.call(response.id)
         ]);
 
         expect(payerOwed0.minus(payerOwed1)).to.be.bignumber.eq(openTx.principal);

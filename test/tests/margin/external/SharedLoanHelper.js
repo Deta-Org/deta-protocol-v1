@@ -23,7 +23,7 @@ async function getSharedLoanConstants(sharedLoanContract, initialLender) {
     OwedTokenWithdrawnEarlyLender,
     OwedTokenWithdrawnEarlyZero,
   ] = await Promise.all([
-    sharedLoanContract.DYDX_MARGIN.call(),
+    sharedLoanContract.deta_MARGIN.call(),
     sharedLoanContract.INITIAL_LENDER.call(),
     sharedLoanContract.POSITION_ID.call(),
     sharedLoanContract.state.call(),

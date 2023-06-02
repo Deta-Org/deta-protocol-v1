@@ -22,7 +22,7 @@ const { expectThrow } = require('../../../../helpers/ExpectHelper');
 const { signLoanOffering } = require('../../../../helpers/LoanHelper');
 
 contract('ERC20CappedPosition', accounts => {
-  let dydxMargin, heldToken, owedToken;
+  let detaMargin, heldToken, owedToken;
 
   let POSITIONS = {
     LONG: {
@@ -57,7 +57,7 @@ contract('ERC20CappedPosition', accounts => {
 
   before('Set up Proxy, Margin accounts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       heldToken,
       owedToken
     ] = await Promise.all([
@@ -88,8 +88,8 @@ contract('ERC20CappedPosition', accounts => {
       POSITIONS.LONG.NUM_TOKENS,
       POSITIONS.SHORT.NUM_TOKENS
     ] = await Promise.all([
-      dydxMargin.getPositionBalance.call(POSITIONS.LONG.ID),
-      dydxMargin.getPositionPrincipal.call(POSITIONS.SHORT.ID)
+      detaMargin.getPositionBalance.call(POSITIONS.LONG.ID),
+      detaMargin.getPositionPrincipal.call(POSITIONS.SHORT.ID)
     ]);
   }
 
@@ -104,7 +104,7 @@ contract('ERC20CappedPosition', accounts => {
     ] = await Promise.all([
       ERC20CappedLong.new(
         POSITIONS.LONG.ID,
-        dydxMargin.address,
+        detaMargin.address,
         INITIAL_TOKEN_HOLDER,
         POSITIONS.LONG.TRUSTED_RECIPIENTS,
         POSITIONS.LONG.TRUSTED_WITHDRAWERS,
@@ -116,7 +116,7 @@ contract('ERC20CappedPosition', accounts => {
       ),
       ERC20CappedShort.new(
         POSITIONS.SHORT.ID,
-        dydxMargin.address,
+        detaMargin.address,
         INITIAL_TOKEN_HOLDER,
         POSITIONS.SHORT.TRUSTED_RECIPIENTS,
         POSITIONS.LONG.TRUSTED_WITHDRAWERS,
@@ -131,12 +131,12 @@ contract('ERC20CappedPosition', accounts => {
 
   async function transferPositionsToTokens() {
     await Promise.all([
-      dydxMargin.transferPosition(
+      detaMargin.transferPosition(
         POSITIONS.LONG.ID,
         POSITIONS.LONG.TOKEN_CONTRACT.address,
         { from: POSITIONS.LONG.TX.trader }
       ),
-      dydxMargin.transferPosition(
+      detaMargin.transferPosition(
         POSITIONS.SHORT.ID,
         POSITIONS.SHORT.TOKEN_CONTRACT.address,
         { from: POSITIONS.SHORT.TX.trader }
@@ -159,7 +159,7 @@ contract('ERC20CappedPosition', accounts => {
     it('sets constants correctly for short', async () => {
       const tokenContract = await ERC20CappedShort.new(
         positionId,
-        dydxMargin.address,
+        detaMargin.address,
         initialTokenHolder,
         [trustedRecipient],
         [trustedWithdrawer],
@@ -222,7 +222,7 @@ contract('ERC20CappedPosition', accounts => {
     it('sets constants correctly for long', async () => {
       const tokenContract = await ERC20CappedLong.new(
         positionId,
-        dydxMargin.address,
+        detaMargin.address,
         initialTokenHolder,
         [trustedRecipient],
         [trustedWithdrawer],
@@ -291,7 +291,7 @@ contract('ERC20CappedPosition', accounts => {
       for (let type in POSITIONS) {
         const POSITION = POSITIONS[type];
 
-        await dydxMargin.transferPosition(
+        await detaMargin.transferPosition(
           POSITION.ID,
           POSITION.TOKEN_CONTRACT.address,
           { from: POSITION.TX.owner }
@@ -311,7 +311,7 @@ contract('ERC20CappedPosition', accounts => {
         const POSITION = POSITIONS[type];
 
         await expectThrow(
-          dydxMargin.transferPosition(
+          detaMargin.transferPosition(
             POSITION.ID,
             POSITION.TOKEN_CONTRACT.address,
             { from: POSITION.TX.owner }
@@ -439,9 +439,9 @@ contract('ERC20CappedPosition', accounts => {
       );
 
       if (args.throws) {
-        await expectThrow(callIncreasePosition(dydxMargin, incrTx));
+        await expectThrow(callIncreasePosition(detaMargin, incrTx));
       } else {
-        await callIncreasePosition(dydxMargin, incrTx);
+        await callIncreasePosition(detaMargin, incrTx);
       }
       return incrTx;
     }
@@ -595,7 +595,7 @@ contract('ERC20CappedPosition', accounts => {
         closer,
         position.TX.loanOffering.rates.maxAmount
       );
-      const promise = dydxMargin.closePositionDirectly(
+      const promise = detaMargin.closePositionDirectly(
         position.ID,
         position.NUM_TOKENS.div(10),
         recipient,

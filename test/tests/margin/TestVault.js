@@ -441,7 +441,7 @@ contract('Vault', accounts => {
           num1,
           proxy.address
         ),
-        // account[1] acts as dYdX contract and puts the funds in the vault
+        // account[1] acts as deta contract and puts the funds in the vault
         vault.grantAccess(accounts[1])
       ]);
 

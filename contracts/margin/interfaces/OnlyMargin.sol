@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ pragma experimental "v0.5.0";
 
 /**
  * @title OnlyMargin
- * @author dYdX
+ * @author deta
  *
  * Contract to store the address of the main Margin contract and trust only that address to call
  * certain functions.
@@ -32,7 +32,7 @@ contract OnlyMargin {
     // ============ Constants ============
 
     // Address of the known and trusted Margin contract on the blockchain
-    address public DYDX_MARGIN;
+    address public deta_MARGIN;
 
     // ============ Constructor ============
 
@@ -41,7 +41,7 @@ contract OnlyMargin {
     )
         public
     {
-        DYDX_MARGIN = margin;
+        deta_MARGIN = margin;
     }
 
     // ============ Modifiers ============
@@ -49,7 +49,7 @@ contract OnlyMargin {
     modifier onlyMargin()
     {
         require(
-            msg.sender == DYDX_MARGIN,
+            msg.sender == deta_MARGIN,
             "OnlyMargin#onlyMargin: Only Margin can call"
         );
 

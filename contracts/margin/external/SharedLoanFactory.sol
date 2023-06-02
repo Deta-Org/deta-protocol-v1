@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import { LoanOwner } from "../interfaces/lender/LoanOwner.sol";
 
 /**
  * @title SharedLoanFactory
- * @author dYdX
+ * @author deta
  *
  * This contract is used to deploy new SharedLoan contracts. A new SharedLoan is automatically
  * deployed whenever a loan is transferred to this contract. That loan is then transferred to the
@@ -85,7 +85,7 @@ contract SharedLoanFactory is
     {
         address sharedLoanAddress = new SharedLoan(
             positionId,
-            DYDX_MARGIN,
+            deta_MARGIN,
             from,
             TRUSTED_MARGIN_CALLERS
         );

@@ -24,7 +24,7 @@ module.exports = {
 };
 
 async function checkSuccess(
-  dydxMargin,
+  detaMargin,
   openTx,
   closeTx,
   sellOrder,
@@ -39,9 +39,9 @@ async function checkSuccess(
     isClosed
   ] = await Promise.all([
     getOwedAmount(openTx, closeTx, closeAmount),
-    getBalances(dydxMargin, openTx, sellOrder),
-    dydxMargin.containsPosition.call(openTx.id),
-    dydxMargin.isPositionClosed.call(openTx.id)
+    getBalances(detaMargin, openTx, sellOrder),
+    detaMargin.containsPosition.call(openTx.id),
+    detaMargin.isPositionClosed.call(openTx.id)
   ]);
 
   const expectedUsedHeldToken = getPartialAmount(
@@ -242,7 +242,7 @@ async function getOwedAmount(openTx, closeTx, closeAmount, roundUpToPeriod = tru
   return getOwedAmount;
 }
 
-async function getBalances(dydxMargin, openTx, sellOrder) {
+async function getBalances(detaMargin, openTx, sellOrder) {
   const [
     owedToken,
     heldToken,
@@ -300,8 +300,8 @@ async function getBalances(dydxMargin, openTx, sellOrder) {
     heldToken.balanceOf.call(Vault.address),
     owedToken.balanceOf.call(Vault.address),
 
-    dydxMargin.getPositionBalance.call(openTx.id),
-    dydxMargin.getPositionPrincipal.call(openTx.id),
+    detaMargin.getPositionBalance.call(openTx.id),
+    detaMargin.getPositionPrincipal.call(openTx.id),
   ]);
 
   return {
@@ -328,7 +328,7 @@ async function getBalances(dydxMargin, openTx, sellOrder) {
 }
 
 async function checkSuccessCloseDirectly(
-  dydxMargin,
+  detaMargin,
   openTx,
   closeTx,
   closeAmount,
@@ -338,7 +338,7 @@ async function checkSuccessCloseDirectly(
     balances,
     owedTokenOwedToLender
   ] = await Promise.all([
-    getBalances(dydxMargin, openTx),
+    getBalances(detaMargin, openTx),
     getOwedAmount(openTx, closeTx, closeAmount)
   ]);
 

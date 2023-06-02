@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import { MarginHelper } from "../lib/MarginHelper.sol";
 
 /**
  * @title ERC20CappedPosition
- * @author dYdX
+ * @author deta
  *
  * ERC20 Position with a limit on the number of tokens that can be minted, and a restriction on
  * which addreses can close the position after it is force-recoverable.
@@ -107,7 +107,7 @@ contract ERC20CappedPosition is
         internal
         returns (uint256)
     {
-        MarginCommon.Position memory position = MarginHelper.getPosition(DYDX_MARGIN, POSITION_ID);
+        MarginCommon.Position memory position = MarginHelper.getPosition(deta_MARGIN, POSITION_ID);
 
         bool afterEnd =
             block.timestamp > uint256(position.startTimestamp).add(position.maxDuration);

@@ -38,19 +38,19 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(accounts);
 
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       console.log(
         '\tMargin.increasePosition (0x Exchange Contract) gas used: ' + tx.receipt.gasUsed
       );
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -65,15 +65,15 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(accounts, { depositInHeldToken: false });
 
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -88,12 +88,12 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin
+        detaMargin
       } = await setup(accounts);
 
       increasePosTx.loanOffering.rates.minHeldToken = openTx.loanOffering.rates.minHeldToken;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -110,7 +110,7 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(
@@ -118,7 +118,7 @@ describe('#increasePosition', () => {
         { positionOwner: testPositionOwner.address, loanOwner: testLoanOwner.address }
       );
 
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       const [
         positionPrincipalAdded,
@@ -132,7 +132,7 @@ describe('#increasePosition', () => {
       expect(loanValueAdded).to.be.bignumber.eq(increasePosTx.principal);
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -160,7 +160,7 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(
@@ -170,7 +170,7 @@ describe('#increasePosition', () => {
 
       // fail once
       await expectThrow(
-        callIncreasePosition(dydxMargin, increasePosTx)
+        callIncreasePosition(detaMargin, increasePosTx)
       );
 
       // set permissions
@@ -182,7 +182,7 @@ describe('#increasePosition', () => {
       ]);
 
       // succeed as it chains through
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       const [
         positionPrincipalAdded1,
@@ -202,7 +202,7 @@ describe('#increasePosition', () => {
       expect(loanValueAdded2).to.be.bignumber.eq(increasePosTx.principal);
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -224,12 +224,12 @@ describe('#increasePosition', () => {
 
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(
         accounts,
         { positionOwner: testPositionOwner.address, loanOwner: testLoanOwner.address }
       );
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -245,12 +245,12 @@ describe('#increasePosition', () => {
 
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(
         accounts,
         { positionOwner: testPositionOwner.address, loanOwner: testLoanOwner.address }
       );
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -259,7 +259,7 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(accounts);
@@ -267,10 +267,10 @@ describe('#increasePosition', () => {
       increasePosTx.loanOffering.maxDuration = increasePosTx.loanOffering.maxDuration * 2;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -284,13 +284,13 @@ describe('#increasePosition', () => {
     it('does not allow a loan offering with smaller maxDuration to be used', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(accounts);
 
       increasePosTx.loanOffering.maxDuration = increasePosTx.loanOffering.maxDuration / 10;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -299,7 +299,7 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         startingBalance,
         startingBalances
       } = await setup(accounts);
@@ -307,10 +307,10 @@ describe('#increasePosition', () => {
       increasePosTx.loanOffering.callTimeLimit = increasePosTx.loanOffering.callTimeLimit * 2;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      const tx = await callIncreasePosition(dydxMargin, increasePosTx);
+      const tx = await callIncreasePosition(detaMargin, increasePosTx);
 
       await validate({
-        dydxMargin,
+        detaMargin,
         openTx,
         increasePosTx,
         tx,
@@ -324,13 +324,13 @@ describe('#increasePosition', () => {
     it('does not allow a loan offering with smaller callTimeLimit to be used', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(accounts);
 
       increasePosTx.loanOffering.callTimeLimit = increasePosTx.loanOffering.callTimeLimit - 1;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -338,13 +338,13 @@ describe('#increasePosition', () => {
     it('does not allow a loan offering with smaller callTimeLimit to be used', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(accounts);
 
       increasePosTx.loanOffering.callTimeLimit = increasePosTx.loanOffering.callTimeLimit - 1;
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -353,12 +353,12 @@ describe('#increasePosition', () => {
       const {
         openTx,
         increasePosTx,
-        dydxMargin,
+        detaMargin,
       } = await setup(accounts);
 
       await wait(openTx.loanOffering.maxDuration + 1);
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -366,7 +366,7 @@ describe('#increasePosition', () => {
     it('does not allow buy orders with too high price', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         heldToken
       } = await setup(accounts);
 
@@ -380,7 +380,7 @@ describe('#increasePosition', () => {
         ZeroExProxyV1.address
       );
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -388,7 +388,7 @@ describe('#increasePosition', () => {
     it('disallows buy orders with too high price when depositing in owed token', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         heldToken
       } = await setup(accounts, { depositInHeldToken: false });
 
@@ -402,7 +402,7 @@ describe('#increasePosition', () => {
         ZeroExProxyV1.address
       );
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 
@@ -410,7 +410,7 @@ describe('#increasePosition', () => {
     it('Does not allow more owedToken to be borrowed from the lender than maxAmount', async () => {
       const {
         increasePosTx,
-        dydxMargin,
+        detaMargin,
         heldToken
       } = await setup(accounts);
 
@@ -428,7 +428,7 @@ describe('#increasePosition', () => {
       increasePosTx.loanOffering.rates.minHeldToken = new BigNumber(1);
       increasePosTx.loanOffering.signature = await signLoanOffering(increasePosTx.loanOffering);
 
-      await expectThrow(callIncreasePosition(dydxMargin, increasePosTx));
+      await expectThrow(callIncreasePosition(detaMargin, increasePosTx));
     });
   });
 });
@@ -438,7 +438,7 @@ async function setup(accounts, { loanOwner, positionOwner, depositInHeldToken } 
     depositInHeldToken = true;
   }
 
-  const [dydxMargin, owedToken, heldToken, feeToken] = await Promise.all([
+  const [detaMargin, owedToken, heldToken, feeToken] = await Promise.all([
     Margin.deployed(),
     OwedToken.deployed(),
     HeldToken.deployed(),
@@ -469,7 +469,7 @@ async function setup(accounts, { loanOwner, positionOwner, depositInHeldToken } 
 
   await issueTokensAndSetAllowances(openTx);
 
-  const response = await callOpenPosition(dydxMargin, openTx);
+  const response = await callOpenPosition(detaMargin, openTx);
 
   if (depositInHeldToken) {
     await issueTokenToAccountInAmountAndApproveProxy(
@@ -492,8 +492,8 @@ async function setup(accounts, { loanOwner, positionOwner, depositInHeldToken } 
     startingBalance,
     startingBalances,
   ] = await Promise.all([
-    dydxMargin.getPositionBalance.call(openTx.id),
-    getBalances(increasePosTx, owedToken, heldToken, feeToken, dydxMargin),
+    detaMargin.getPositionBalance.call(openTx.id),
+    getBalances(increasePosTx, owedToken, heldToken, feeToken, detaMargin),
   ]);
 
   increasePosTx.principal = increasePosTx.principal.div(4).floor();
@@ -505,7 +505,7 @@ async function setup(accounts, { loanOwner, positionOwner, depositInHeldToken } 
   return {
     openTx,
     increasePosTx,
-    dydxMargin,
+    detaMargin,
     owedToken,
     heldToken,
     feeToken,
@@ -514,7 +514,7 @@ async function setup(accounts, { loanOwner, positionOwner, depositInHeldToken } 
   };
 }
 
-async function getBalances(tx, owedToken, heldToken, feeToken, dydxMargin) {
+async function getBalances(tx, owedToken, heldToken, feeToken, detaMargin) {
   const [
     traderOwedToken,
     lenderOwedToken,
@@ -542,7 +542,7 @@ async function getBalances(tx, owedToken, heldToken, feeToken, dydxMargin) {
     feeToken.balanceOf.call(tx.buyOrder.maker),
     feeToken.balanceOf.call(ExchangeWrapper.address),
     feeToken.balanceOf.call(tx.trader),
-    dydxMargin.getLoanFilledAmount.call(tx.loanOffering.loanHash)
+    detaMargin.getLoanFilledAmount.call(tx.loanOffering.loanHash)
   ]);
 
   return {
@@ -563,7 +563,7 @@ async function getBalances(tx, owedToken, heldToken, feeToken, dydxMargin) {
 }
 
 async function validate({
-  dydxMargin,
+  detaMargin,
   openTx,
   increasePosTx,
   tx,
@@ -576,7 +576,7 @@ async function validate({
     heldToken,
     feeToken
   ]= await Promise.all([
-    getPosition(dydxMargin, openTx.id),
+    getPosition(detaMargin, openTx.id),
     OwedToken.deployed(),
     HeldToken.deployed(),
     FeeToken.deployed(),
@@ -600,9 +600,9 @@ async function validate({
     owedAmount,
     finalBalances
   ] = await Promise.all([
-    dydxMargin.getPositionBalance.call(openTx.id),
+    detaMargin.getPositionBalance.call(openTx.id),
     getOwedAmount(openTx, tx, increasePosTx.principal, false),
-    getBalances(increasePosTx, owedToken, heldToken, feeToken, dydxMargin)
+    getBalances(increasePosTx, owedToken, heldToken, feeToken, detaMargin)
   ]);
 
   const startingHeldTokenBalancePerUnit = getPartialAmount(startingBalance, openTx.principal);

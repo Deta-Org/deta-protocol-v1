@@ -26,14 +26,14 @@ const { signLoanOffering } = require('../../../helpers/LoanHelper');
 const { wait } = require('@digix/tempo')(web3);
 
 contract('DutchAuctionCloser', accounts => {
-  let dydxMargin, VaultContract, ERC721MarginPositionContract;
+  let detaMargin, VaultContract, ERC721MarginPositionContract;
   let OwedTokenContract, HeldTokenContract;
   let openTx;
   const dutchBidder = accounts[9];
 
   before('retrieve deployed contracts', async () => {
     [
-      dydxMargin,
+      detaMargin,
       VaultContract,
       ERC721MarginPositionContract,
       OwedTokenContract,
@@ -51,7 +51,7 @@ contract('DutchAuctionCloser', accounts => {
     it('sets constants correctly', async () => {
       const contract = await DutchAuctionCloser.new(Margin.address, 1, 2);
       const [ssAddress, num, den] = await Promise.all([
-        contract.DYDX_MARGIN.call(),
+        contract.deta_MARGIN.call(),
         contract.CALL_TIMELIMIT_NUMERATOR.call(),
         contract.CALL_TIMELIMIT_DENOMINATOR.call(),
       ]);
@@ -83,7 +83,7 @@ contract('DutchAuctionCloser', accounts => {
         true,
         { from: openTx.trader }
       );
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         openTx.id,
         0 /*requiredDeposit*/,
         { from: openTx.loanOffering.owner }
@@ -111,7 +111,7 @@ contract('DutchAuctionCloser', accounts => {
       await wait(callTimeLimit * 3 / 4);
 
       await expectThrow(callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(2),
         {
@@ -136,7 +136,7 @@ contract('DutchAuctionCloser', accounts => {
       await wait(callTimeLimit / 4);
 
       await expectThrow(callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(2),
         {
@@ -149,7 +149,7 @@ contract('DutchAuctionCloser', accounts => {
     it('succeeds if bids after callTimeLimit', async () => {
       await wait(callTimeLimit + 1);
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(2),
         {
@@ -160,14 +160,14 @@ contract('DutchAuctionCloser', accounts => {
     });
 
     it('succeeds for position near end of maxDuration', async () => {
-      await dydxMargin.cancelMarginCall(openTx.id, { from: openTx.loanOffering.owner });
+      await detaMargin.cancelMarginCall(openTx.id, { from: openTx.loanOffering.owner });
       await wait(openTx.loanOffering.maxDuration - callTimeLimit);
 
       const closeAmount = openTx.principal.div(2).floor();
 
       // closing half is fine
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         closeAmount,
         {
@@ -178,15 +178,15 @@ contract('DutchAuctionCloser', accounts => {
     });
 
     it('succeeds for position near end of maxDuration even if margin-called', async () => {
-      await dydxMargin.cancelMarginCall(openTx.id, { from: openTx.loanOffering.owner });
+      await detaMargin.cancelMarginCall(openTx.id, { from: openTx.loanOffering.owner });
       await wait(openTx.loanOffering.maxDuration - callTimeLimit);
-      await dydxMargin.marginCall(openTx.id, 0, { from: openTx.loanOffering.owner });
+      await detaMargin.marginCall(openTx.id, 0, { from: openTx.loanOffering.owner });
 
       const closeAmount = openTx.principal.div(2).floor();
 
       // closing half is fine
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         closeAmount,
         {
@@ -239,7 +239,7 @@ contract('DutchAuctionCloser', accounts => {
 
       // closing half is fine
       const closeTx1 = await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         closeAmount,
         {
@@ -251,7 +251,7 @@ contract('DutchAuctionCloser', accounts => {
 
       // closing the other half is fine
       const closeTx2 = await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         closeAmount,
         {
@@ -263,7 +263,7 @@ contract('DutchAuctionCloser', accounts => {
 
       // cannot close half a third time
       await expectThrow(callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         closeAmount,
         {
@@ -309,7 +309,7 @@ contract('DutchAuctionCloser', accounts => {
       openTx.loanOffering.callTimeLimit = 0;
       openTx.loanOffering.signature = await signLoanOffering(openTx.loanOffering);
       await issueTokensAndSetAllowances(openTx);
-      const response = await callOpenPosition(dydxMargin, openTx);
+      const response = await callOpenPosition(detaMargin, openTx);
       openTx.id = response.id;
 
       // grant tokens and set permissions for bidder
@@ -323,20 +323,20 @@ contract('DutchAuctionCloser', accounts => {
       // fail before margin-call
       const closeArgs = { from: dutchBidder, recipient: DutchAuctionCloser.address };
       await expectThrow(callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(4),
         closeArgs
       ));
 
       // succeeds at margin-call
-      await dydxMargin.marginCall(
+      await detaMargin.marginCall(
         openTx.id,
         0,
         { from: openTx.loanOffering.owner }
       );
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(4),
         closeArgs
@@ -345,7 +345,7 @@ contract('DutchAuctionCloser', accounts => {
       // succeeds after margin-call finished
       await wait(10);
       await callClosePositionDirectly(
-        dydxMargin,
+        detaMargin,
         openTx,
         openTx.principal.div(4),
         closeArgs

@@ -1,6 +1,6 @@
 /*
 
-    Copyright 2018 dYdX Trading Inc.
+    Copyright 2018 deta Trading Inc.
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import { ExchangeReader } from "../interfaces/ExchangeReader.sol";
 
 /**
  * @title AuctionProxy
- * @author dYdX
+ * @author deta
  *
  * Contract that automatically sets the close amount for bidding in a Dutch Auction
  */
@@ -49,7 +49,7 @@ contract AuctionProxy
 
     // ============ State Variables ============
 
-    address public DYDX_MARGIN;
+    address public deta_MARGIN;
 
     // ============ Constructor ============
 
@@ -58,7 +58,7 @@ contract AuctionProxy
     )
         public
     {
-        DYDX_MARGIN = margin;
+        deta_MARGIN = margin;
     }
 
     // ============ Public Functions ============
@@ -84,7 +84,7 @@ contract AuctionProxy
         external
         returns (uint256)
     {
-        Margin margin = Margin(DYDX_MARGIN);
+        Margin margin = Margin(deta_MARGIN);
 
         if (!margin.containsPosition(positionId)) {
             return 0; // if position is closed, return zero instead of throwing
